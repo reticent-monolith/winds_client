@@ -1,25 +1,95 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react"
+import axios from "axios"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Log from "./utilities/Log"
+import Controls from "./components/Controls"
+import DispatchCard from "./components/DispatchCard"
+import Dispatch from "./models/Dispatch"
+import {config} from "./config"
+
+
+const URL = "http://localhost:8080/"
+
+export default class App extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.getDispatches = this.getDispatches.bind(this)
+        this.createDispatch = this.createDispatch.bind(this)
+        this.updateDispatch = this.updateDispatch.bind(this)
+        this.deleteDispatch = this.deleteDispatch.bind(this)
+
+        this.state = {
+            dispatches: [], // received from server
+        }
+    }
+
+    componentDidMount() {
+        this.getDispatches()
+    }
+    
+    render() {
+        return (
+            <div>
+                <Controls 
+                createDispatch={this.createDispatch}
+                />
+                <div>
+                    {this.state.dispatches.map(d => {
+                        return (
+                            <DispatchCard 
+                            key={d._id}
+                            data={d}
+                            />
+                            )
+                        })}
+                </div>
+            </div>
+        )
+    }
+
+    async getDispatches() {
+        try {
+            const response = await axios.get(`${URL}all/`)
+
+            Log.debug("A received dispatch", response.data[0])
+
+            this.setState({dispatches: response.data})
+        } catch (error) {
+            Log.error(error)
+        }
+    }
+
+    async createDispatch(dispatch) {
+        const dispatchPayload = new Dispatch(dispatch)
+
+        Log.debug("The dispatch paramter", dispatch)
+        Log.debug("The dispatch payload", dispatchPayload)
+
+        try {
+
+            await axios.post(`${URL}debug/`, dispatchPayload)
+
+            await axios.post(`${URL}add/`, dispatchPayload)
+            this.getDispatches()
+        } catch (error) {
+            Log.error(error)
+        }
+    }
+
+    async updateDispatch(dispatch) {
+        try {
+            await axios.post(`${URL}update/`, dispatch)
+        } catch (error) {
+            Log.error(error)
+        }
+    }
+
+    async deleteDispatch(id) {
+        try {
+            await axios.post(`${URL}delete/`, id)
+        } catch (error) {
+            Log.error(error)
+        }
+    }
 }
-
-export default App;
