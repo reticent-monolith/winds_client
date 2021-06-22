@@ -2,6 +2,7 @@ import React from "react"
 
 import Log from "../utilities/Log"
 import {config} from "../config"
+import LineInput from "./LineInput"
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -36,6 +37,12 @@ export default class Controls extends React.Component {
                     e.preventDefault()
                     this.props.createDispatch(this.state)
                 }}>
+                    <LineInput line={4} />
+                    <LineInput line={3} />
+                    <LineInput line={2} />
+                    <LineInput line={1} />
+
+                    {/* Comment Input */}
                     <input 
                     type="text"
                     value={this.state.comment}
