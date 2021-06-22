@@ -52,9 +52,6 @@ export default class App extends React.Component {
     async getDispatches() {
         try {
             const response = await axios.get(`${URL}all/`)
-
-            Log.debug("A received dispatch", response.data[0])
-
             this.setState({dispatches: response.data})
         } catch (error) {
             Log.error(error)
@@ -63,10 +60,6 @@ export default class App extends React.Component {
 
     async createDispatch(dispatch) {
         const dispatchPayload = new Dispatch(dispatch)
-
-        Log.debug("The dispatch paramter", dispatch)
-        Log.debug("The dispatch payload", dispatchPayload)
-
         try {
 
             await axios.post(`${URL}debug/`, dispatchPayload)
