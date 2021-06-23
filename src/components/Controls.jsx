@@ -101,7 +101,7 @@ export default class Controls extends React.Component {
             display: "flex",
             justifyContent: "center",
             width: "100%",
-            height: "160px",
+            height: "180px",
             padding: "5px",
             background: "white",
             zIndex: "2"
@@ -119,14 +119,14 @@ export default class Controls extends React.Component {
             justifyContent: "space-between",
             width: "250px",
             height: "100%",
-            backgroundColor: "gray",
             borderRadius: "5px",
             row: {
                 display: "flex",
                 justifyContent: "space-between",
                 padding: "5px",
                 label: {
-                    color: "white"
+                    color: "black",
+                    fontSize: "0.7em"
                 }
             }
         },
@@ -138,36 +138,58 @@ export default class Controls extends React.Component {
         },
         commentModal: {
             overlay: {
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(255, 255, 255, 0.75)',
-              zIndex: "3"
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.75)',
+                zIndex: "3"
             },
             content: {
-              position: 'absolute',
-              top: '30%',
-              left: '30%',
-              right: 'auto',
-              bottom: 'auto',
-              border: '1px solid #ccc',
-              background: '#fff',
-              overflow: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              borderRadius: '4px',
-              outline: 'none',
-              padding: '20px',
-              zIndex: "4"
+                position: 'absolute',
+                top: '30%',
+                left: '30%',
+                right: 'auto',
+                bottom: 'auto',
+                border: '1px solid #ccc',
+                background: '#fff',
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                borderRadius: '4px',
+                outline: 'none',
+                padding: '20px',
+                zIndex: "4"
             }
-          }
+        },
+        topLabels: {
+            fontSize: "0.7em",
+            textAlign: "center",
+            display: "flex",
+            padding: "0 15px 0 30px",
+            justifyContent: "space-between",
+            weight: {width: "44px"},
+            front: {width: "60px"},
+            middle: {width: "60px"},
+            rear: {width: "60px"},
+            added: {width: "44px"},
+            trolley: {width: "44px"},
+        }
     }
 
     render() {
         return (
             <div style={this.styles.container}>
                 <div style={this.styles.lineContainer}>
+                    <div style={this.styles.topLabels}>
+                        <span style={this.styles.topLabels.weight}>Weight</span>
+                        <span style={this.styles.topLabels.front}>Front</span>
+                        <span style={this.styles.topLabels.middle}>Middle</span>
+                        <span style={this.styles.topLabels.rear}>Rear</span>
+                        <span style={this.styles.topLabels.added}>Added</span>
+                        <span style={this.styles.topLabels.trolley}>Trolley</span>
+                    </div>
+                    
                     {[4,3,2,1].map(line => {
                         return (
                             <div key={`line${line}`} style={this.styles.lineDiv[line]}>
