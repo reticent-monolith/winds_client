@@ -60,7 +60,11 @@ export default class App extends React.Component {
     async getDispatches() {
         try {
             const response = await axios.get(`${URL}all/`)
-            this.setState({dispatches: response.data.reverse()})
+
+            Log.debug(response)
+            console.log(response)
+
+            this.setState({dispatches: response.data})
         } catch (error) {
             Log.error(error)
         }
