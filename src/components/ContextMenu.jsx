@@ -30,12 +30,14 @@ export default class ContextMenu extends React.Component {
 
     handleContextMenu = (e) => {
         e.preventDefault();
-        this.setState({
-            xPos: `${e.pageX}px`,
-            yPos: `${e.pageY}px`,
-            showMenu: true,
-            id: this.props.id
-        });
+        if (this.props.id !== "") {
+            this.setState({
+                xPos: `${e.pageX}px`,
+                yPos: `${e.pageY}px`,
+                showMenu: true,
+                id: this.props.id
+            });
+        }
     }
 
     render() {
@@ -76,7 +78,9 @@ export default class ContextMenu extends React.Component {
                             width: "80px"
                         }}
                         onClick={() => {
-                            this.props.delete(this.state.id)
+                            if (this.state.id !== "") {
+                                this.props.delete(this.state.id)
+                            }
                         }}
                     >
                         Delete
