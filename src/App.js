@@ -7,10 +7,14 @@ import Log from "./utilities/Log"
 import Controls from "./components/Controls"
 import DispatchCard from "./components/DispatchCard"
 import Dispatch from "./models/Dispatch"
+import ContextMenu from "./components/ContextMenu";
 
 
 const URL = "http://localhost:8080/"
 
+document.addEventListener("contextmenu", e => {
+    e.preventDefault()
+})
 export default class App extends React.Component {
     constructor(props) {
         super(props)
@@ -23,16 +27,12 @@ export default class App extends React.Component {
 
         this.state = {
             dispatches: [], // received from server
+            id: ""
         }
     }
 
     componentDidMount() {
         this.getDispatches()
-    }
-
-    componentDidUpdate() {
-        Log.debug("Latest dispatch in app state")
-        console.log(this.state.dispatches[0])
     }
 
     styles = {
@@ -44,6 +44,8 @@ export default class App extends React.Component {
     render() {
         return (
             <div>
+                <ContextMenu id={this.state.id} delete={this.deleteDispatch}/>
+
                 <Controls 
                     createDispatch={this.createDispatch}
                     purge={this.purgeDatabase}
@@ -54,6 +56,8 @@ export default class App extends React.Component {
                             <DispatchCard 
                                 key={d._id}
                                 data={d}
+                                mouseEnter={this.handleMouseEnter}
+                                mouseLeave={this.handleMouseLeave}
                             />
                             )
                         })}
@@ -65,9 +69,6 @@ export default class App extends React.Component {
     async getDispatches() {
         try {
             const response = await axios.get(`${URL}all/`)
-            Log.debug("Raw response")
-            console.log(response.data.reverse()[0])
-
             this.setState({dispatches: response.data.map( d => {
                 return new Dispatch(d)
             })})
@@ -78,6 +79,7 @@ export default class App extends React.Component {
 
     async createDispatch(dispatch) {
         const dispatchPayload = new Dispatch(dispatch)
+        delete dispatchPayload._id
         try {
             await axios.post(`${URL}add/`, dispatchPayload)
             this.getDispatches()
@@ -111,5 +113,17 @@ export default class App extends React.Component {
         } catch (error) {
             Log.error(error)
         }
+    }
+
+    handleMouseEnter = (id) => {
+        this.setState({
+            id: id 
+        })
+    }
+
+    handleMouseLeave = () => {
+        this.setState({
+            id: ""
+        })
     }
 }

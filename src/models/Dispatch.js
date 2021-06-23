@@ -7,5 +7,6 @@ export default class Dispatch {
         this.windsInstructor = dispatchState.windsInstructor
         this.btRadio = dispatchState.btRadio
         this.comment = dispatchState.comment
+        this._id = dispatchState._id || null
     }
 }

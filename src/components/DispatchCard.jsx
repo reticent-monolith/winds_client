@@ -4,7 +4,14 @@ import {config} from "../config"
 import RiderCard from "./RiderCard"
 
 
+
 export default class DispatchCard extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            showBox: false
+        }
+    }
 
     styles = {
         container: {
@@ -41,7 +48,15 @@ export default class DispatchCard extends React.Component {
 
     render() {
         return (
-            <div style={this.styles.container}>
+            <div 
+                style={this.styles.container}
+                onMouseEnter={() => {
+                    this.props.mouseEnter(this.props.data._id)
+                }}
+                onMouseLeave={() => {
+                    this.props.mouseLeave()
+                }}
+            >
                 {this.time()}
                 <RiderCard color={config.colors.red} rider={this.props.data.riders[4]}/>
                 <RiderCard color={config.colors.blue} rider={this.props.data.riders[3]}/>
@@ -70,4 +85,5 @@ export default class DispatchCard extends React.Component {
             <span style={this.styles.time}>{timeString}</span>
         )
     }
+
 }

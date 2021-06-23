@@ -57,7 +57,6 @@ export default class RiderCard extends React.Component {
                 <span></span>
             </div>
         )
-        
     }
 
     setup() {
@@ -72,11 +71,10 @@ export default class RiderCard extends React.Component {
         const rear = this.props.rider.rearSlider
         const added = this.props.rider.addedWeight
         let sliderString = ""
-        let addedString = ""
         if (added !== 0 && (
             front !== null || mid !== null || rear !== null
         )) {
-            return "INVALID SETUP"
+            return "INVALID"
         } else if ( front !== null || mid !== null || rear !== null) {
             sliderString = `${sl[front] || ""} ${sl[mid] || ""} ${sl[rear] || ""}`
             return sliderString
