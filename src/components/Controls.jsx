@@ -2,6 +2,7 @@ import React from "react"
 import ReactModal from "react-modal"
 import Log from "../utilities/Log"
 import {config} from "../config"
+import Button from 'react-bootstrap/Button';
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -60,15 +61,12 @@ export default class Controls extends React.Component {
         Log.debug("Controls Loaded")
     }
 
-    componentDidUpdate() {
-        Log.debug(`${this.state.commentModalIsOpen}`)
-    }
-
     styles = {
         lineDiv: {
             base: {
                 display: "flex",
                 justifyContent: "space-around",
+                alignItems: "center",
                 borderRadius: "5px",
                 padding: "5px",
                 marginRight: "5px",
@@ -77,7 +75,9 @@ export default class Controls extends React.Component {
         label: {
             color: "white",
             fontWeight: "bold",
-            fontSize: "1.2em",
+            fontSize: "1em",
+            paddingBottom: "0",
+            height: "1.1em"
         },
         input: {
             width: "40px",
@@ -101,10 +101,13 @@ export default class Controls extends React.Component {
             display: "flex",
             justifyContent: "center",
             width: "100%",
-            height: "180px",
+            height: "200px",
             padding: "5px",
             background: "white",
-            zIndex: "2"
+            zIndex: "2",
+            position: "fixed",
+            top: "0px",
+            paddingBottom: "20px"
         },
         lineContainer: {
             display: "flex",
@@ -117,7 +120,8 @@ export default class Controls extends React.Component {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            width: "250px",
+            margin: "0 10px",
+            width: "200px",
             height: "100%",
             borderRadius: "5px",
             row: {
@@ -174,6 +178,15 @@ export default class Controls extends React.Component {
             rear: {width: "60px"},
             added: {width: "44px"},
             trolley: {width: "44px"},
+        },
+        buttonContainer: {
+            display: "flex",
+            flexDirection: "column",
+            width: "200px",
+            justifyContent: "space-between"
+        },
+        button: {
+            height: "40px"
         }
     }
 
@@ -219,7 +232,7 @@ export default class Controls extends React.Component {
                                     style={this.styles.select}
                                     value={this.state.dispatch.riders[line].frontSlider || ""}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.riders)
+                                        const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].frontSlider = e.target.value
                                         this.setState({
                                             ...this.state,
@@ -241,7 +254,7 @@ export default class Controls extends React.Component {
                                     style={this.styles.select}
                                     value={this.state.dispatch.riders[line].middleSlider || ""}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.riders)
+                                        const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].middleSlider = e.target.value
                                         this.setState({
                                             ...this.state,
@@ -262,7 +275,7 @@ export default class Controls extends React.Component {
                                     style={this.styles.select}
                                     value={this.state.dispatch.riders[line].rearSlider || ""}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.riders)
+                                        const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].rearSlider = e.target.value
                                         this.setState({
                                             ...this.state,
@@ -283,7 +296,7 @@ export default class Controls extends React.Component {
                                     type="number"
                                     value={this.state.dispatch.riders[line].addedWeight}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.riders)
+                                        const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].addedWeight = e.target.value
                                         this.setState({
                                             ...this.state,
@@ -301,7 +314,7 @@ export default class Controls extends React.Component {
                                     type="number"
                                     value={this.state.dispatch.riders[line].trolley}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.riders)
+                                        const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].trolley = e.target.value
                                         this.setState({
                                             ...this.state,
@@ -395,9 +408,10 @@ export default class Controls extends React.Component {
                         ></input>
                     </div>
 
-                    <button
+                    <Button
+                        style={this.styles.button}
                         onClick={this.openCommentModal}
-                    >Add a comment</button> 
+                    >Add a comment</Button> 
                     <ReactModal
                         isOpen={this.state.commentModalIsOpen}
                         onAfterOpen={this.afterOpenCommentModal}
@@ -424,12 +438,27 @@ export default class Controls extends React.Component {
 
                 </div>
                 
-
-                <button
-                    onClick={e => {
-                        this.props.createDispatch(this.state.dispatch)
-                    }}
-                >Dispatch</button>
+                <div style={this.styles.buttonContainer}>
+                    <Button
+                        style={this.styles.button}
+                        variant="success"
+                        onClick={e => {
+                            this.props.createDispatch(this.state.dispatch)
+                        }}
+                    >Dispatch</Button>
+                    <Button
+                        style={this.styles.button}
+                        variant="warning"
+                        onClick={e => {
+                        }}
+                    >Restore</Button>
+                    <Button
+                        style={this.styles.button}
+                        variant="danger"
+                        onClick={this.props.purge}
+                    >Clear</Button>
+                </div>
+                
             </div>
         )
     }
