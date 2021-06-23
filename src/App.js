@@ -30,6 +30,10 @@ export default class App extends React.Component {
         this.getDispatches()
     }
 
+    componentDidUpdate() {
+        console.log(this.state.dispatches[0])
+    }
+
     styles = {
         list: {
             marginTop: "200px"
@@ -61,10 +65,9 @@ export default class App extends React.Component {
         try {
             const response = await axios.get(`${URL}all/`)
 
-            Log.debug(response)
-            console.log(response)
-
-            this.setState({dispatches: response.data})
+            this.setState({dispatches: response.data.reverse().map( d => {
+                return new Dispatch(d)
+            })})
         } catch (error) {
             Log.error(error)
         }

@@ -6,10 +6,6 @@ import RiderCard from "./RiderCard"
 
 export default class DispatchCard extends React.Component {
 
-    componentDidMount() {
-        Log.debug(`Dispatch ${this.props.data._id} Loaded`)
-    }
-
     styles = {
         container: {
             display: "flex",

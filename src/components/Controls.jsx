@@ -57,10 +57,6 @@ export default class Controls extends React.Component {
         this.afterOpenCommentModal = this.afterOpenCommentModal.bind(this)
     }
 
-    componentDidMount() {
-        Log.debug("Controls Loaded")
-    }
-
     styles = {
         lineDiv: {
             base: {
@@ -86,6 +82,7 @@ export default class Controls extends React.Component {
             textAlign: "center",
             height: "1.2em",
             fontSize: "1.2em",
+            backgroundColor: config.colors.light
         },
         select: {
             width: "60px",
