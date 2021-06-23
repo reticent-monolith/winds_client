@@ -6,7 +6,6 @@ import Log from "./utilities/Log"
 import Controls from "./components/Controls"
 import DispatchCard from "./components/DispatchCard"
 import Dispatch from "./models/Dispatch"
-import {config} from "./config"
 
 
 const URL = "http://localhost:8080/"
@@ -61,9 +60,6 @@ export default class App extends React.Component {
     async createDispatch(dispatch) {
         const dispatchPayload = new Dispatch(dispatch)
         try {
-
-            await axios.post(`${URL}debug/`, dispatchPayload)
-
             await axios.post(`${URL}add/`, dispatchPayload)
             this.getDispatches()
         } catch (error) {

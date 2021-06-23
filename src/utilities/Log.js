@@ -1,8 +1,6 @@
 export default class Log {
-    static debug(text, obj) {
+    static debug(text) {
         console.debug(`|#| WINDS DEBUG: ${text}`)
-        console.log(obj)
-        console.debug("|#| ======================================")
     }
 
     static error(text) {

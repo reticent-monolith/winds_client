@@ -1,32 +1,34 @@
 import React from "react"
-
+import ReactModal from "react-modal"
 import Log from "../utilities/Log"
 import {config} from "../config"
-import LineInput from "./LineInput"
 
 export default class Controls extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            riders: {
-                4: {
-                    weight: 0
+            dispatch: {
+                riders: {
+                    4: {
+                        weight: 0
+                    },
+                    3: {
+                        weight: 0
+                    },
+                    2: {
+                        weight: 0
+                    },
+                    1: {
+                        weight: 0
+                    }
                 },
-                3: {
-                    weight: 0
-                },
-                2: {
-                    weight: 0
-                },
-                1: {
-                    weight: 0
-                }
+                windSpeed: "",
+                windDegrees: "",
+                windsInstructor: "",
+                btRadio: "",
+                comment: ""
             },
-            windSpeed: "",
-            windDegrees: "",
-            windsInstructor: "",
-            btRadio: "",
-            comment: ""
+            commentModalIsOpen: false
         }
         this.styles.lineDiv[4] = {
             ...this.styles.lineDiv.base,
@@ -48,6 +50,18 @@ export default class Controls extends React.Component {
             ...this.styles.input,
             width: "100px"
         }
+
+        this.openCommentModal = this.openCommentModal.bind(this)
+        this.closeCommentModal = this.closeCommentModal.bind(this)
+        this.afterOpenCommentModal = this.afterOpenCommentModal.bind(this)
+    }
+
+    componentDidMount() {
+        Log.debug("Controls Loaded")
+    }
+
+    componentDidUpdate() {
+        Log.debug(`${this.state.commentModalIsOpen}`)
     }
 
     styles = {
@@ -57,6 +71,7 @@ export default class Controls extends React.Component {
                 justifyContent: "space-around",
                 borderRadius: "5px",
                 padding: "5px",
+                marginRight: "5px",
             }
         },
         label: {
@@ -84,242 +99,362 @@ export default class Controls extends React.Component {
         },
         container: {
             display: "flex",
+            justifyContent: "center",
             width: "100%",
             height: "160px",
-            padding: "5px"
+            padding: "5px",
+            background: "white",
+            zIndex: "2"
         },
         lineContainer: {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            width: "40%",
+            width: "400px",
             height: "100%"
         },
         windContainer: {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            width: "40%",
+            width: "250px",
             height: "100%",
-            backgroundColor: "gray"
-        }
+            backgroundColor: "gray",
+            borderRadius: "5px",
+            row: {
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "5px",
+                label: {
+                    color: "white"
+                }
+            }
+        },
+        textArea: {
+            border: "none",
+            borderRadius: "5px",
+            width: "500px",
+            height: "300px"
+        },
+        commentModal: {
+            overlay: {
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.75)',
+              zIndex: "3"
+            },
+            content: {
+              position: 'absolute',
+              top: '30%',
+              left: '30%',
+              right: 'auto',
+              bottom: 'auto',
+              border: '1px solid #ccc',
+              background: '#fff',
+              overflow: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              borderRadius: '4px',
+              outline: 'none',
+              padding: '20px',
+              zIndex: "4"
+            }
+          }
     }
 
     render() {
         return (
-            <form onSubmit={(e) => {
-                e.preventDefault()
-                this.props.createDispatch(this.state)
-                this.clearInputs()
-            }}>
-                <div style={this.styles.container}>
+            <div style={this.styles.container}>
+                <div style={this.styles.lineContainer}>
+                    {[4,3,2,1].map(line => {
+                        return (
+                            <div key={`line${line}`} style={this.styles.lineDiv[line]}>
+                                {/* label */}
+                                <label style={this.styles.label}>{`${line}`}</label>
 
-                    <div style={this.styles.lineContainer}>
-                        {[4,3,2,1].map(line => {
-                            return (
-                                <div key={`line${line}`} style={this.styles.lineDiv[line]}>
-                                    {/* label */}
-                                    <label style={this.styles.label}>{`${line}`}</label>
-
-                                    {/* weight */}
-                                    <input
-                                        style={this.styles.input}
-                                        type="number"
-                                        value={this.state.riders[line].weight === 0 ? "" : this.state.riders[line].weight}
-                                        onChange={e => {
-                                            const copy = Object.assign({}, this.state.riders)
-                                            copy[line].weight = e.target.value
-                                            this.setState({
-                                                ...this.state,
+                                {/* weight */}
+                                <input
+                                    style={this.styles.input}
+                                    type="number"
+                                    value={this.state.dispatch.riders[line].weight === 0 ? "" : this.state.dispatch.riders[line].weight}
+                                    onChange={e => {
+                                        const copy = Object.assign({}, this.state.dispatch.riders)
+                                        copy[line].weight = e.target.value
+                                        this.setState({
+                                            ...this.state,
+                                            dispatch: {
+                                                ...this.state.dispatch,
                                                 riders: copy
-                                            })
-                                        }}
-                                    ></input>
+                                            }
+                                        })
+                                    }}
+                                ></input>
 
-                                    {/* front slider */}
-                                    <select
-                                        style={this.styles.select}
-                                        value={this.state.riders[line].frontSlider || ""}
-                                        onChange={e => {
-                                            const copy = Object.assign({}, this.state.riders)
-                                            copy[line].frontSlider = e.target.value
-                                            this.setState({
-                                                ...this.state,
+                                {/* front slider */}
+                                <select
+                                    style={this.styles.select}
+                                    value={this.state.dispatch.riders[line].frontSlider || ""}
+                                    onChange={e => {
+                                        const copy = Object.assign({}, this.state.riders)
+                                        copy[line].frontSlider = e.target.value
+                                        this.setState({
+                                            ...this.state,
+                                            dispatch: {
+                                                ...this.state.dispatch,
                                                 riders: copy
-                                            })
-                                        }}
-                                    >
-                                        <option value="BLACK">S1</option>
-                                        <option value="OLD_RED">SO2</option>
-                                        <option value="NEW_RED">SN2</option>
-                                        <option value=""></option>
-                                    </select>
+                                            }
+                                        })
+                                    }}
+                                >
+                                    <option value="BLACK">S1</option>
+                                    <option value="OLD_RED">SO2</option>
+                                    <option value="NEW_RED">SN2</option>
+                                    <option value=""></option>
+                                </select>
 
-                                    {/* middle slider */}
-                                    <select
-                                        style={this.styles.select}
-                                        value={this.state.riders[line].middleSlider || ""}
-                                        onChange={e => {
-                                            const copy = Object.assign({}, this.state.riders)
-                                            copy[line].middleSlider = e.target.value
-                                            this.setState({
-                                                ...this.state,
+                                {/* middle slider */}
+                                <select
+                                    style={this.styles.select}
+                                    value={this.state.dispatch.riders[line].middleSlider || ""}
+                                    onChange={e => {
+                                        const copy = Object.assign({}, this.state.riders)
+                                        copy[line].middleSlider = e.target.value
+                                        this.setState({
+                                            ...this.state,
+                                            dispatch: {
+                                                ...this.state.dispatch,
                                                 riders: copy
-                                            })
-                                        }}
-                                    >
-                                        <option value="OLD_RED">SO2</option>
-                                        <option value="NEW_RED">SN2</option>
-                                        <option value=""></option>
-                                    </select>
+                                            }
+                                        })
+                                    }}
+                                >
+                                    <option value="OLD_RED">SO2</option>
+                                    <option value="NEW_RED">SN2</option>
+                                    <option value=""></option>
+                                </select>
 
-                                    {/* rear slider */}
-                                    <select
-                                        style={this.styles.select}
-                                        value={this.state.riders[line].rearSlider || ""}
-                                        onChange={e => {
-                                            const copy = Object.assign({}, this.state.riders)
-                                            copy[line].rearSlider = e.target.value
-                                            this.setState({
-                                                ...this.state,
+                                {/* rear slider */}
+                                <select
+                                    style={this.styles.select}
+                                    value={this.state.dispatch.riders[line].rearSlider || ""}
+                                    onChange={e => {
+                                        const copy = Object.assign({}, this.state.riders)
+                                        copy[line].rearSlider = e.target.value
+                                        this.setState({
+                                            ...this.state,
+                                            dispatch: {
+                                                ...this.state.dispatch,
                                                 riders: copy
-                                            })
-                                        }}
-                                    >
-                                        <option value="YELLOW">S3</option>
-                                        <option value=""></option>
-                                    </select>
+                                            }
+                                        })
+                                    }}
+                                >
+                                    <option value="YELLOW">S3</option>
+                                    <option value=""></option>
+                                </select>
 
-                                    {/* added weight */}
-                                    <input
-                                        style={this.styles.input}
-                                        type="number"
-                                        value={this.state.riders[line].addedWeight}
-                                        onChange={e => {
-                                            const copy = Object.assign({}, this.state.riders)
-                                            copy[line].addedWeight = e.target.value
-                                            this.setState({
-                                                ...this.state,
+                                {/* added weight */}
+                                <input
+                                    style={this.styles.input}
+                                    type="number"
+                                    value={this.state.dispatch.riders[line].addedWeight}
+                                    onChange={e => {
+                                        const copy = Object.assign({}, this.state.riders)
+                                        copy[line].addedWeight = e.target.value
+                                        this.setState({
+                                            ...this.state,
+                                            dispatch: {
+                                                ...this.state.dispatch,
                                                 riders: copy
-                                            })
-                                        }}
-                                    ></input>
+                                            }
+                                        })
+                                    }}
+                                ></input>
 
-                                    {/* trolley */}
-                                    <input
-                                        style={this.styles.input}
-                                        type="number"
-                                        value={this.state.riders[line].trolley}
-                                        onChange={e => {
-                                            const copy = Object.assign({}, this.state.riders)
-                                            copy[line].trolley = e.target.value
-                                            this.setState({
-                                                ...this.state,
+                                {/* trolley */}
+                                <input
+                                    style={this.styles.input}
+                                    type="number"
+                                    value={this.state.dispatch.riders[line].trolley}
+                                    onChange={e => {
+                                        const copy = Object.assign({}, this.state.riders)
+                                        copy[line].trolley = e.target.value
+                                        this.setState({
+                                            ...this.state,
+                                            dispatch: {
+                                                ...this.state.dispatch,
                                                 riders: copy
-                                            })
-                                        }}
-                                    ></input>
-                                </div>
-                            )
-                        })}
-                    </div>
+                                            }
+                                        })
+                                    }}
+                                ></input>
+                            </div>
+                        )
+                    })}
+                </div>
 
-                    <div style={this.styles.windContainer}>
+                <div style={this.styles.windContainer}>
+                    <div style={this.styles.windContainer.row}>
                         {/* wind speed input */}
+                        <label style={this.styles.windContainer.row.label}>Wind Speed (mph)</label>
                         <input
                             type="number"
                             style={this.styles.input}
-                            value={this.state.windSpeed}
+                            value={this.state.dispatch.windSpeed}
                             onChange={e => {
                                 this.setState({
                                     ...this.state, 
-                                    windSpeed: e.target.value
+                                    dispatch: {
+                                        ...this.state.dispatch,
+                                        windSpeed: e.target.value
+                                    }
                                 })
                             }}
                         ></input>
+                    </div>
 
+                    <div style={this.styles.windContainer.row}>
                         {/* wind degrees input */}
+                        <label style={this.styles.windContainer.row.label}>Wind Degrees</label>
                         <input
                             type="number"
                             style={this.styles.input}
-                            value={this.state.windDegrees}
+                            value={this.state.dispatch.windDegrees}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
-                                    windDegrees: e.target.value
+                                    dispatch: {
+                                        ...this.state.dispatch,
+                                        windDegrees: e.target.value
+                                    }
                                 })
                             }}
                         ></input>
+                    </div>
 
+
+                    <div style={this.styles.windContainer.row}>
                         {/* winds instructor */}
+                        <label style={this.styles.windContainer.row.label}>Winds Instructor</label>
                         <input
                             type="text"
                             style={this.styles.inputL}
-                            value={this.state.windsInstructor}
+                            value={this.state.dispatch.windsInstructor}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
-                                    windsInstructor: e.target.value
+                                    dispatch: {
+                                        ...this.state.dispatch,
+                                        windsInstructor: e.target.value
+                                    }
                                 })
                             }}
                         ></input>
+                    </div>
 
+                    <div style={this.styles.windContainer.row}>
                         {/* bt radio */}
+                        <label style={this.styles.windContainer.row.label}>Big Top Radio</label>
                         <input
                             type="text"
                             style={this.styles.inputL}
-                            value={this.state.btRadio}
+                            value={this.state.dispatch.btRadio}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
-                                    btRadio: e.target.value
+                                    dispatch: {
+                                        ...this.state.dispatch,
+                                        btRadio: e.target.value
+                                    }
                                 })
                             }}
                         ></input>
+                    </div>
 
+                    <button
+                        onClick={this.openCommentModal}
+                    >Add a comment</button> 
+                    <ReactModal
+                        isOpen={this.state.commentModalIsOpen}
+                        onAfterOpen={this.afterOpenCommentModal}
+                        onRequestClose={this.closeCommentModal}
+                        contentLabel="Add a comment"
+                        style={this.styles.commentModal}
+                    >
                         {/* Comment Input */}
                         <textarea
-                            value={this.state.comment}
+                            style={this.styles.textArea}
+                            value={this.state.dispatch.comment}
                             placeholder="Add a comment"
-                            onChange={(e) => {
+                            onChange={e => {
                                 this.setState({
                                     ...this.state,
-                                    comment: e.target.value
+                                    dispatch: {
+                                        ...this.state.dispatch,
+                                        comment: e.target.value
+                                    }
                                 })
                             }}
                         ></textarea>
-                    </div>
-                    
+                    </ReactModal>
 
-                    <input
-                        type="submit"
-                    ></input>
                 </div>
-            </form>
+                
+
+                <button
+                    onClick={e => {
+                        this.props.createDispatch(this.state.dispatch)
+                    }}
+                >Dispatch</button>
+            </div>
         )
     }
 
     clearInputs() {
         this.setState({
-            riders: {
-                4: {
-                    weight: 0
+            ...this.state,
+            dispatch: {
+               riders: {
+                    4: {
+                        weight: 0
+                    },
+                    3: {
+                        weight: 0
+                    },
+                    2: {
+                        weight: 0
+                    },
+                    1: {
+                        weight: 0
+                    }
                 },
-                3: {
-                    weight: 0
-                },
-                2: {
-                    weight: 0
-                },
-                1: {
-                    weight: 0
-                }
-            },
-            windSpeed: "",
-            windDegrees: "",
-            windsInstructor: "",
-            btRadio: "",
-            comment: ""
+                windSpeed: "",
+                windDegrees: "",
+                windsInstructor: "",
+                btRadio: "",
+                comment: ""
+            } 
+        })
+    }
+
+    openCommentModal() {
+        this.setState({
+            ...this.state,
+            commentModalIsOpen: true
+        })
+        Log.debug("Opening Modal")
+    }
+
+    afterOpenCommentModal() {
+        Log.debug("Should be open now...")
+    }
+
+    closeCommentModal() {
+        this.setState({
+            ...this.state,
+            commentModalIsOpen: false
         })
     }
 }
