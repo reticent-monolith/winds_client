@@ -11,16 +11,24 @@ export default class Controls extends React.Component {
             dispatch: {
                 riders: {
                     4: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     },
                     3: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     },
                     2: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     },
                     1: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     }
                 },
                 windSpeed: "",
@@ -55,6 +63,7 @@ export default class Controls extends React.Component {
         this.openCommentModal = this.openCommentModal.bind(this)
         this.closeCommentModal = this.closeCommentModal.bind(this)
         this.afterOpenCommentModal = this.afterOpenCommentModal.bind(this)
+        this.clearInputs = this.clearInputs.bind(this)
     }
 
     styles = {
@@ -231,6 +240,7 @@ export default class Controls extends React.Component {
                                     onChange={e => {
                                         const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].frontSlider = e.target.value
+                                        copy[line].addedWeight = 0
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
@@ -253,6 +263,7 @@ export default class Controls extends React.Component {
                                     onChange={e => {
                                         const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].middleSlider = e.target.value
+                                        copy[line].addedWeight = 0
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
@@ -274,6 +285,7 @@ export default class Controls extends React.Component {
                                     onChange={e => {
                                         const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].rearSlider = e.target.value
+                                        copy[line].addedWeight = 0
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
@@ -291,10 +303,13 @@ export default class Controls extends React.Component {
                                 <input
                                     style={this.styles.input}
                                     type="number"
-                                    value={this.state.dispatch.riders[line].addedWeight}
+                                    value={this.state.dispatch.riders[line].addedWeight === 0 ? "" : this.state.dispatch.riders[line].addedWeight}
                                     onChange={e => {
                                         const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].addedWeight = e.target.value
+                                        delete copy[line].frontSlider
+                                        delete copy[line].middleSlider
+                                        delete copy[line].rearSlider
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
@@ -309,7 +324,7 @@ export default class Controls extends React.Component {
                                 <input
                                     style={this.styles.input}
                                     type="number"
-                                    value={this.state.dispatch.riders[line].trolley}
+                                    value={this.state.dispatch.riders[line].trolley === 0 ? "" : this.state.dispatch.riders[line].trolley}
                                     onChange={e => {
                                         const copy = Object.assign({}, this.state.dispatch.riders)
                                         copy[line].trolley = e.target.value
@@ -441,19 +456,19 @@ export default class Controls extends React.Component {
                         variant="success"
                         onClick={e => {
                             this.props.createDispatch(this.state.dispatch)
+                            this.clearInputs()
                         }}
                     >Dispatch</Button>
                     <Button
                         style={this.styles.button}
                         variant="warning"
-                        onClick={e => {
-                        }}
-                    >Restore</Button>
+                        onClick={this.clearInputs}
+                    >Clear</Button>
                     <Button
                         style={this.styles.button}
                         variant="danger"
                         onClick={this.props.purge}
-                    >Clear</Button>
+                    >Purge</Button>
                 </div>
                 
             </div>
@@ -464,18 +479,26 @@ export default class Controls extends React.Component {
         this.setState({
             ...this.state,
             dispatch: {
-               riders: {
+                riders: {
                     4: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     },
                     3: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     },
                     2: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     },
                     1: {
-                        weight: 0
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
                     }
                 },
                 windSpeed: "",
@@ -492,11 +515,10 @@ export default class Controls extends React.Component {
             ...this.state,
             commentModalIsOpen: true
         })
-        Log.debug("Opening Modal")
     }
 
     afterOpenCommentModal() {
-        Log.debug("Should be open now...")
+
     }
 
     closeCommentModal() {

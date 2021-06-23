@@ -31,6 +31,7 @@ export default class App extends React.Component {
     }
 
     componentDidUpdate() {
+        Log.debug("Latest dispatch in app state")
         console.log(this.state.dispatches[0])
     }
 
@@ -64,8 +65,10 @@ export default class App extends React.Component {
     async getDispatches() {
         try {
             const response = await axios.get(`${URL}all/`)
+            Log.debug("Raw response")
+            console.log(response.data.reverse()[0])
 
-            this.setState({dispatches: response.data.reverse().map( d => {
+            this.setState({dispatches: response.data.map( d => {
                 return new Dispatch(d)
             })})
         } catch (error) {

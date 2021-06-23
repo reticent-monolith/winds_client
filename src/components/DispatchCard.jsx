@@ -52,34 +52,22 @@ export default class DispatchCard extends React.Component {
         )
     }
 
-    time() {
-
-        
-        const time = this.props.data.time
-        
-        Log.debug(`${time} for ${this.props.data._id}`)
-
-
-        // const hours = 
-        //     this.props.data.time[0].toString().length < 2 ? `0${this.props.data.time[0]}` : this.props.data.time[0]
-        // const minutes = 
-        //     this.props.data.time[1].toString().length < 2 ? `0${this.props.data.time[1]}` : this.props.data.time[1]
-        // const seconds = 
-        //     this.props.data.time[2].toString().length < 2 ? `0${this.props.data.time[2]}` : this.props.data.time[2]
-        // return (
-        //     <div style={this.styles.time}>
-        //         <span>{`${hours}:${minutes}:${seconds}`}</span>
-        //     </div>
-        // ) 
-    }
-
     wind() {
         const speedStyle = this.props.data.windSpeed > 45 ? this.styles.wind.fastSpeed : this.styles.wind.speed
         return (
             <div style={this.styles.wind}>
                 <span style={speedStyle}>{this.props.data.windSpeed} <span style={speedStyle}>mph</span></span>
-                <span style={this.styles.wind.degrees}>{this.props.data.windDegrees}</span>
+                <span style={this.styles.wind.degrees}>{this.props.data.windDegrees}°</span>
             </div>
+        )
+    }
+
+    time() {
+
+        const timeString = this.props.data.dateTime.split("T")[1].split(".")[0]
+
+        return (
+            <span style={this.styles.time}>{timeString}</span>
         )
     }
 }
