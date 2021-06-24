@@ -8,6 +8,7 @@ import Controls from "./components/Controls"
 import DispatchCard from "./components/DispatchCard"
 import Dispatch from "./models/Dispatch"
 import ContextMenu from "./components/ContextMenu";
+import Modal from 'react-modal'
 
 
 const URL = "http://localhost:8080/"
@@ -24,10 +25,43 @@ export default class App extends React.Component {
         this.updateDispatch = this.updateDispatch.bind(this)
         this.deleteDispatch = this.deleteDispatch.bind(this)
         this.purgeDatabase = this.purgeDatabase.bind(this)
+        this.getDispatchById = this.getDispatchById.bind(this)
+
+        Modal.setAppElement('#root');
 
         this.state = {
             dispatches: [], // received from server
-            id: ""
+            id: "",
+            editModalIsOpen: false,
+            currentlyEditing: {
+                riders: {
+                    4: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
+                    },
+                    3: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
+                    },
+                    2: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
+                    },
+                    1: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0
+                    }
+                },
+                windSpeed: "",
+                windDegrees: "",
+                windsInstructor: "",
+                btRadio: "",
+                comment: ""
+            }
         }
     }
 
@@ -38,13 +72,70 @@ export default class App extends React.Component {
     styles = {
         list: {
             marginTop: "200px"
-        }
+        },
+        editModal: {
+            overlay: {
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.75)',
+              zIndex: "10"
+            },
+            content: {
+              position: 'absolute',
+              top: '40px',
+              left: '40px',
+              right: '40px',
+              bottom: '40px',
+              border: '1px solid #ccc',
+              background: '#fff',
+              overflow: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              borderRadius: '4px',
+              outline: 'none',
+              padding: '20px',
+              zIndex: "11"
+            }
+          }
     }
     
     render() {
         return (
             <div>
-                <ContextMenu id={this.state.id} delete={this.deleteDispatch}/>
+                <ContextMenu 
+                    id={this.state.id} 
+                    delete={this.deleteDispatch}
+                    dispatches={this.state.dispatches}
+                    get={this.getDispatchById}
+                    openEditModal={this.openEditModal}
+                />
+                <Modal
+                    isOpen={this.state.editModalIsOpen}
+                    onRequestClose={this.closeEditModal}
+                    contentLabel="Edit Modal"
+                    style={this.styles.editModal}
+                    onAfterOpen={this.afterOpenEditModal}
+                >
+                    <div>
+                        {/* comment */}
+                        <label>Comment</label>
+                        <input
+                            value={this.state.currentlyEditing.comment}
+                            onChange={e => {
+                                this.setState({
+                                    ...this.state,
+                                    currentlyEditing: {
+                                        ...this.state.currentlyEditing,
+                                        comment: e.target.value
+                                    }
+                                })
+                            }}
+                        ></input>
+                    </div>
+                </Modal>
+
 
                 <Controls 
                     createDispatch={this.createDispatch}
@@ -68,7 +159,7 @@ export default class App extends React.Component {
 
     async getDispatches() {
         try {
-            const response = await axios.get(`${URL}all/`)
+            const response = await axios.get(`${URL}all`)
             this.setState({dispatches: response.data.map( d => {
                 return new Dispatch(d)
             })})
@@ -81,7 +172,7 @@ export default class App extends React.Component {
         const dispatchPayload = new Dispatch(dispatch)
         delete dispatchPayload._id
         try {
-            await axios.post(`${URL}add/`, dispatchPayload)
+            await axios.post(`${URL}add`, dispatchPayload)
             this.getDispatches()
         } catch (error) {
             Log.error(error)
@@ -90,7 +181,7 @@ export default class App extends React.Component {
 
     async updateDispatch(dispatch) {
         try {
-            await axios.post(`${URL}update/`, dispatch)
+            await axios.post(`${URL}update`, dispatch)
             this.getDispatches()
         } catch (error) {
             Log.error(error)
@@ -99,7 +190,7 @@ export default class App extends React.Component {
 
     async deleteDispatch(id) {
         try {
-            await axios.post(`${URL}delete/`, id)
+            await axios.post(`${URL}delete`, id)
             this.getDispatches()
         } catch (error) {
             Log.error(error)
@@ -108,8 +199,18 @@ export default class App extends React.Component {
 
     async purgeDatabase() {
         try {
-            await axios.delete(`${URL}purge/`)
+            await axios.delete(`${URL}purge`)
             this.getDispatches()
+        } catch (error) {
+            Log.error(error)
+        }
+    }
+
+    async getDispatchById(id) {
+        try {
+            const dispatch = await axios.get(`${URL}get/${id}`)
+            this.getDispatches()
+            return dispatch
         } catch (error) {
             Log.error(error)
         }
@@ -125,5 +226,26 @@ export default class App extends React.Component {
         this.setState({
             id: ""
         })
+    }
+
+    openEditModal = (dispatch) => {
+        console.log(dispatch)
+        this.setState({
+            currentlyEditing: dispatch,
+            editModalIsOpen: true
+        })
+    }
+
+    afterOpenEditModal = () => {
+
+    }
+
+    closeEditModal = () => {
+        this.updateDispatch(this.state.currentlyEditing)
+        this.setState({editModalIsOpen: false})
+    }
+
+    editModalIsOpen = () => {
+
     }
 }

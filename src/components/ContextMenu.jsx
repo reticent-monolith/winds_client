@@ -12,6 +12,7 @@ export default class ContextMenu extends React.Component {
             showMenu: false,
             id: ""
         }
+        this.handleEditClick = this.handleEditClick.bind(this)
     }
 
     componentDidMount() {
@@ -69,6 +70,7 @@ export default class ContextMenu extends React.Component {
                         style={{
                             width: "80px"
                         }}
+                        onClick={this.handleEditClick}
                     >
                         Edit
                     </Button>
@@ -88,6 +90,20 @@ export default class ContextMenu extends React.Component {
                 </div>
             );
         else return null;
+    }
+
+    async handleEditClick() {
+        let dispatch = ""
+        if (this.state.id !== "") {
+            console.log(this.props.dispatches)
+            if (this.props.dispatches.length > 0) {
+                dispatch = this.props.dispatches.find(d => {
+                    return d._id === this.state.id  
+                })
+                this.props.openEditModal(dispatch)
+            }
+            
+        }
     }
 
 }

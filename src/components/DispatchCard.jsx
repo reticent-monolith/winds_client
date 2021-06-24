@@ -29,7 +29,6 @@ export default class DispatchCard extends React.Component {
             justifyContent: "space-between",
             width: "100px",
             alignItems: "center",
-            
             speed: {
 
             },
