@@ -12,6 +12,7 @@ import Modal from 'react-modal'
 
 
 const URL = "http://localhost:8080/"
+const TODAY = new Date(Date.now()).toJSON().split("T")[0]
 
 document.addEventListener("contextmenu", e => {
     e.preventDefault()
@@ -67,6 +68,36 @@ export default class App extends React.Component {
 
     componentDidMount() {
         this.getDispatches()
+        // for (let i in [...Array(2000).keys()]) {
+        //     this.createDispatch({riders: {
+        //         4: {
+        //             weight: 0,
+        //             trolley: 0,
+        //             addedWeight: 0
+        //         },
+        //         3: {
+        //             weight: 0,
+        //             trolley: 0,
+        //             addedWeight: 0
+        //         },
+        //         2: {
+        //             weight: 0,
+        //             trolley: 0,
+        //             addedWeight: 0
+        //         },
+        //         1: {
+        //             weight: 0,
+        //             trolley: 0,
+        //             addedWeight: 0
+        //         }
+        //     },
+        //     windSpeed: "",
+        //     windDegrees: "",
+        //     windsInstructor: "",
+        //     btRadio: "",
+        //     comment: ""
+        // })
+        // }
     }
 
     styles = {
@@ -143,15 +174,19 @@ export default class App extends React.Component {
                 />
                 <div style={this.styles.list}>
                     {this.state.dispatches.map(d => {
-                        return (
-                            <DispatchCard 
-                                key={d._id}
-                                data={d}
-                                mouseEnter={this.handleMouseEnter}
-                                mouseLeave={this.handleMouseLeave}
-                            />
-                            )
-                        })}
+                        const dispatch = new Dispatch(d)
+                        if (dispatch.dateTime.split("T")[0] === TODAY) {
+                            return (
+                                <DispatchCard 
+                                    key={dispatch._id}
+                                    data={dispatch}
+                                    mouseEnter={this.handleMouseEnter}
+                                    mouseLeave={this.handleMouseLeave}
+                                />
+                                )
+                            }}
+                        )
+                    }
                 </div>
             </div>
         )
