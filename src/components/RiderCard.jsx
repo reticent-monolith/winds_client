@@ -1,6 +1,4 @@
 import React from "react"
-import Log from "../utilities/Log"
-
 import {config} from "../config"
 
 

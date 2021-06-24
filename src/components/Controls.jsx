@@ -1,6 +1,5 @@
 import React from "react"
 import ReactModal from "react-modal"
-import Log from "../utilities/Log"
 import {config} from "../config"
 import Button from 'react-bootstrap/Button';
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import { config } from '../config';
-import Log from '../utilities/Log';
 import Button from 'react-bootstrap/esm/Button';
 
 export default class ContextMenu extends React.Component {
