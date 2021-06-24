@@ -9,6 +9,7 @@ import DispatchCard from "./components/DispatchCard"
 import Dispatch from "./models/Dispatch"
 import ContextMenu from "./components/ContextMenu";
 import Modal from 'react-modal'
+import { config } from "./config";
 
 
 const URL = "http://localhost:8080/"
@@ -68,36 +69,6 @@ export default class App extends React.Component {
 
     componentDidMount() {
         this.getDispatches()
-        // for (let i in [...Array(2000).keys()]) {
-        //     this.createDispatch({riders: {
-        //         4: {
-        //             weight: 0,
-        //             trolley: 0,
-        //             addedWeight: 0
-        //         },
-        //         3: {
-        //             weight: 0,
-        //             trolley: 0,
-        //             addedWeight: 0
-        //         },
-        //         2: {
-        //             weight: 0,
-        //             trolley: 0,
-        //             addedWeight: 0
-        //         },
-        //         1: {
-        //             weight: 0,
-        //             trolley: 0,
-        //             addedWeight: 0
-        //         }
-        //     },
-        //     windSpeed: "",
-        //     windDegrees: "",
-        //     windsInstructor: "",
-        //     btRadio: "",
-        //     comment: ""
-        // })
-        // }
     }
 
     styles = {
@@ -116,10 +87,10 @@ export default class App extends React.Component {
             },
             content: {
               position: 'absolute',
-              top: '40px',
-              left: '40px',
-              right: '40px',
-              bottom: '40px',
+              top: '30%',
+              left: '15%',
+              right: 'auto',
+              bottom: 'auto',
               border: '1px solid #ccc',
               background: '#fff',
               overflow: 'auto',
@@ -127,7 +98,46 @@ export default class App extends React.Component {
               borderRadius: '4px',
               outline: 'none',
               padding: '20px',
-              zIndex: "11"
+              zIndex: "11",
+              display: "flex",
+              fontSize: "0.8em"
+            },
+            generalDiv: {
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                width: "250px",
+                marginRight: "10px"
+            },
+            row: {
+                display: "flex",
+                justifyContent: "space-between",
+                margin: "5px 0"
+            },
+            ridersDiv: {
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between"
+            },
+            rider: {
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                borderRadius: "5px",
+                padding: "5px",
+                marginRight: "5px",
+            },
+            inputS: {
+                width: "40px",
+                textAlign: "center"
+            }, 
+            inputL: {
+                width: "120px",
+                textAlign: "center"
+            },
+            span: {
+                color: "white",
+                margin: "0 5px"
             }
           }
     }
@@ -145,25 +155,244 @@ export default class App extends React.Component {
                 <Modal
                     isOpen={this.state.editModalIsOpen}
                     onRequestClose={this.closeEditModal}
-                    contentLabel="Edit Modal"
+                    contentspan="Edit Modal"
                     style={this.styles.editModal}
                     onAfterOpen={this.afterOpenEditModal}
                 >
-                    <div>
+                    <div style={this.styles.editModal.generalDiv}>
+                        <div style={this.styles.editModal.row}>
+                            {/* windSpeed */}
+                            <span>Wind Speed</span>
+                            <input
+                                value={this.state.currentlyEditing.windSpeed}
+                                style={this.styles.editModal.inputS}
+                                onChange={e => {
+                                    this.setState({
+                                        ...this.state,
+                                        currentlyEditing: {
+                                            ...this.state.currentlyEditing,
+                                            windSpeed: e.target.value
+                                        }
+                                    })
+                                }}
+                            ></input>
+                        </div>
+                        
+                        <div style={this.styles.editModal.row}>
+                            {/* windDegrees */}
+                            <span >Wind Degrees</span>
+                            <input
+                                value={this.state.currentlyEditing.windDegrees}
+                                style={this.styles.editModal.inputS}
+                                onChange={e => {
+                                    this.setState({
+                                        ...this.state,
+                                        currentlyEditing: {
+                                            ...this.state.currentlyEditing,
+                                            windDegrees: e.target.value
+                                        }
+                                    })
+                                }}
+                            ></input>
+                        </div>
+                        
+                        <div style={this.styles.editModal.row}>
+                            {/* windsInstructor */}
+                            <span>Winds Instructor</span>
+                            <input
+                                value={this.state.currentlyEditing.windsInstructor}
+                                style={this.styles.editModal.inputL}
+                                onChange={e => {
+                                    this.setState({
+                                        ...this.state,
+                                        currentlyEditing: {
+                                            ...this.state.currentlyEditing,
+                                            windsInstructor: e.target.value
+                                        }
+                                    })
+                                }}
+                            ></input>
+                        </div>
+
+                        <div style={this.styles.editModal.row}>
+                            {/* btRadio */}
+                            <span>Big Top Radio</span>
+                            <input
+                                value={this.state.currentlyEditing.btRadio}
+                                style={this.styles.editModal.inputL}
+                                onChange={e => {
+                                    this.setState({
+                                        ...this.state,
+                                        currentlyEditing: {
+                                            ...this.state.currentlyEditing,
+                                            btRadio: e.target.value
+                                        }
+                                    })
+                                }}
+                            ></input>
+                        </div>
+
                         {/* comment */}
-                        <label>Comment</label>
-                        <input
-                            value={this.state.currentlyEditing.comment}
-                            onChange={e => {
-                                this.setState({
-                                    ...this.state,
-                                    currentlyEditing: {
-                                        ...this.state.currentlyEditing,
-                                        comment: e.target.value
-                                    }
-                                })
-                            }}
-                        ></input>
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "column"
+                        }}>
+                            <span>Comment</span>
+                            <textarea
+                                value={this.state.currentlyEditing.comment}
+                                onChange={e => {
+                                    this.setState({
+                                        ...this.state,
+                                        currentlyEditing: {
+                                            ...this.state.currentlyEditing,
+                                            comment: e.target.value
+                                        }
+                                    })
+                                }}
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <div style={this.styles.editModal.ridersDiv}>
+                        {[4,3,2,1].map( l => {
+                            return (
+                                <div
+                                    key={l}
+                                    style={{
+                                        ...this.styles.editModal.rider,
+                                        backgroundColor: config.colors[l]
+                                    }}
+                                >
+                                    <span style={this.styles.editModal.span}>Weight</span>
+                                    <input
+                                        value={this.state.currentlyEditing.riders[l].weight}
+                                        style={this.styles.editModal.inputS}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].weight = e.target.value
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    ></input>
+                                    <span style={this.styles.editModal.span}>Front</span>
+                                    <select
+                                        // style={this.styles.editModal.select}
+                                        value={this.state.currentlyEditing.riders[l].frontSlider || ""}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].frontSlider = e.target.value
+                                            copy[l].addedWeight = 0
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    >
+                                        <option value="BLACK">S1</option>
+                                        <option value="OLD_RED">SO2</option>
+                                        <option value="NEW_RED">SN2</option>
+                                        <option value=""></option>
+                                    </select>
+                                    <span style={this.styles.editModal.span}>Middle</span>
+                                    <select
+                                        // style={this.styles.editModal.select}
+                                        value={this.state.currentlyEditing.riders[l].middleSlider || ""}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].middleSlider = e.target.value
+                                            copy[l].addedWeight = 0
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    >
+                                        <option value="OLD_RED">SO2</option>
+                                        <option value="NEW_RED">SN2</option>
+                                        <option value=""></option>
+                                    </select>
+                                    <span style={this.styles.editModal.span}>Rear</span>
+                                    <select
+                                        // style={this.styles.editModal.select}
+                                        value={this.state.currentlyEditing.riders[l].rearSlider || ""}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].rearSlider = e.target.value
+                                            copy[l].addedWeight = 0
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    >
+                                        <option value="YELLOW">S3</option>
+                                        <option value=""></option>
+                                    </select>
+                                    <span style={this.styles.editModal.span}>Added</span>
+                                    <input
+                                        value={this.state.currentlyEditing.riders[l].addedWeight}
+                                        style={this.styles.editModal.inputS}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].addedWeight = e.target.value
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    ></input>
+                                    <span style={this.styles.editModal.span}>Speed</span>
+                                    <input
+                                        value={this.state.currentlyEditing.riders[l].speed}
+                                        style={this.styles.editModal.inputS}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].speed = e.target.value
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    ></input>
+                                    <span style={this.styles.editModal.span}>Trolley</span>
+                                    <input
+                                        value={this.state.currentlyEditing.riders[l].trolley}
+                                        style={this.styles.editModal.inputS}
+                                        onChange={e => {
+                                            const copy = Object.assign({}, this.state.currentlyEditing.riders)
+                                            copy[l].trolley = e.target.value
+                                            this.setState({
+                                                ...this.state,
+                                                currentlyEditing: {
+                                                    ...this.state.currentlyEditing,
+                                                    riders: copy
+                                                }
+                                            })
+                                        }}
+                                    ></input>
+                                </div>
+                            )
+                        })}
                     </div>
                 </Modal>
 
@@ -172,6 +401,7 @@ export default class App extends React.Component {
                     createDispatch={this.createDispatch}
                     purge={this.purgeDatabase}
                 />
+                {/* The dispatches from today as cards */}
                 <div style={this.styles.list}>
                     {this.state.dispatches.map(d => {
                         const dispatch = new Dispatch(d)
@@ -183,10 +413,9 @@ export default class App extends React.Component {
                                     mouseEnter={this.handleMouseEnter}
                                     mouseLeave={this.handleMouseLeave}
                                 />
-                                )
-                            }}
-                        )
-                    }
+                            )
+                        } else return null
+                    })}
                 </div>
             </div>
         )
@@ -274,11 +503,14 @@ export default class App extends React.Component {
         this.setState({
             beforeEdit: Object.assign({}, this.state.currentlyEditing)
         })
+        console.log(this.state.currentlyEditing.riders[4].weight)
     }
 
     closeEditModal = () => {
         if (
-            JSON.stringify(this.state.currentlyEditing) !== JSON.stringify(this.state.beforeEdit)
+            // check to see if a change is needed, but doesnt check each rider!
+            // JSON.stringify(this.state.currentlyEditing) !== JSON.stringify(this.state.beforeEdit)
+            true
         ) {
             this.updateDispatch(this.state.currentlyEditing)
         }
