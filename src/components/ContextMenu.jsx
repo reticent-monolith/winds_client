@@ -95,7 +95,6 @@ export default class ContextMenu extends React.Component {
     async handleEditClick() {
         let dispatch = ""
         if (this.state.id !== "") {
-            console.log(this.props.dispatches)
             if (this.props.dispatches.length > 0) {
                 dispatch = this.props.dispatches.find(d => {
                     return d._id === this.state.id  
