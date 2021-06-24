@@ -12,22 +12,22 @@ export default class Controls extends React.Component {
                     4: {
                         weight: 0,
                         trolley: 0,
-                        addedWeight: 0
+                        addedWeight: 0,
                     },
                     3: {
                         weight: 0,
                         trolley: 0,
-                        addedWeight: 0
+                        addedWeight: 0,
                     },
                     2: {
                         weight: 0,
                         trolley: 0,
-                        addedWeight: 0
+                        addedWeight: 0,
                     },
                     1: {
                         weight: 0,
                         trolley: 0,
-                        addedWeight: 0
+                        addedWeight: 0,
                     }
                 },
                 windSpeed: "",
@@ -220,13 +220,17 @@ export default class Controls extends React.Component {
                                     type="number"
                                     value={this.state.dispatch.riders[line].weight === 0 ? "" : this.state.dispatch.riders[line].weight}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.dispatch.riders)
-                                        copy[line].weight = e.target.value
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
                                                 ...this.state.dispatch,
-                                                riders: copy
+                                                riders: {
+                                                    ...this.state.dispatch.riders,
+                                                    [line]: {
+                                                        ...this.state.dispatch.riders[line],
+                                                        weight: e.target.value
+                                                    }
+                                                }
                                             }
                                         })
                                     }}
@@ -237,14 +241,18 @@ export default class Controls extends React.Component {
                                     style={this.styles.select}
                                     value={this.state.dispatch.riders[line].frontSlider || ""}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.dispatch.riders)
-                                        copy[line].frontSlider = e.target.value
-                                        copy[line].addedWeight = 0
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
                                                 ...this.state.dispatch,
-                                                riders: copy
+                                                riders: {
+                                                    ...this.state.dispatch.riders,
+                                                    [line]: {
+                                                        ...this.state.dispatch.riders[line],
+                                                        frontSlider: e.target.value,
+                                                        addedWeight: 0
+                                                    }
+                                                }
                                             }
                                         })
                                     }}
@@ -260,14 +268,18 @@ export default class Controls extends React.Component {
                                     style={this.styles.select}
                                     value={this.state.dispatch.riders[line].middleSlider || ""}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.dispatch.riders)
-                                        copy[line].middleSlider = e.target.value
-                                        copy[line].addedWeight = 0
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
                                                 ...this.state.dispatch,
-                                                riders: copy
+                                                riders: {
+                                                    ...this.state.dispatch.riders,
+                                                    [line]: {
+                                                        ...this.state.dispatch.riders[line],
+                                                        middleSlider: e.target.value,
+                                                        addedWeight: 0
+                                                    }
+                                                }
                                             }
                                         })
                                     }}
@@ -282,14 +294,18 @@ export default class Controls extends React.Component {
                                     style={this.styles.select}
                                     value={this.state.dispatch.riders[line].rearSlider || ""}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.dispatch.riders)
-                                        copy[line].rearSlider = e.target.value
-                                        copy[line].addedWeight = 0
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
                                                 ...this.state.dispatch,
-                                                riders: copy
+                                                riders: {
+                                                    ...this.state.dispatch.riders,
+                                                    [line]: {
+                                                        ...this.state.dispatch.riders[line],
+                                                        rearSlider: e.target.value,
+                                                        addedWeight: 0
+                                                    }
+                                                }
                                             }
                                         })
                                     }}
@@ -304,16 +320,20 @@ export default class Controls extends React.Component {
                                     type="number"
                                     value={this.state.dispatch.riders[line].addedWeight === 0 ? "" : this.state.dispatch.riders[line].addedWeight}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.dispatch.riders)
-                                        copy[line].addedWeight = e.target.value
-                                        delete copy[line].frontSlider
-                                        delete copy[line].middleSlider
-                                        delete copy[line].rearSlider
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
                                                 ...this.state.dispatch,
-                                                riders: copy
+                                                riders: {
+                                                    ...this.state.dispatch.riders,
+                                                    [line]: {
+                                                        ...this.state.dispatch.riders[line],
+                                                        addedWeight: e.target.value,
+                                                        frontSlider: null,
+                                                        middleSlider: null,
+                                                        rearSlider: null
+                                                    }
+                                                }
                                             }
                                         })
                                     }}
@@ -325,13 +345,17 @@ export default class Controls extends React.Component {
                                     type="number"
                                     value={this.state.dispatch.riders[line].trolley === 0 ? "" : this.state.dispatch.riders[line].trolley}
                                     onChange={e => {
-                                        const copy = Object.assign({}, this.state.dispatch.riders)
-                                        copy[line].trolley = e.target.value
                                         this.setState({
                                             ...this.state,
                                             dispatch: {
                                                 ...this.state.dispatch,
-                                                riders: copy
+                                                riders: {
+                                                    ...this.state.dispatch.riders,
+                                                    [line]: {
+                                                        ...this.state.dispatch.riders[line],
+                                                        trolley: e.target.value
+                                                    }
+                                                }
                                             }
                                         })
                                     }}
