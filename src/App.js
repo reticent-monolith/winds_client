@@ -229,7 +229,6 @@ export default class App extends React.Component {
     }
 
     openEditModal = (dispatch) => {
-        console.log(dispatch)
         this.setState({
             currentlyEditing: dispatch,
             editModalIsOpen: true
@@ -237,11 +236,17 @@ export default class App extends React.Component {
     }
 
     afterOpenEditModal = () => {
-
+        this.setState({
+            beforeEdit: Object.assign({}, this.state.currentlyEditing)
+        })
     }
 
     closeEditModal = () => {
-        this.updateDispatch(this.state.currentlyEditing)
+        if (
+            JSON.stringify(this.state.currentlyEditing) !== JSON.stringify(this.state.beforeEdit)
+        ) {
+            this.updateDispatch(this.state.currentlyEditing)
+        }
         this.setState({editModalIsOpen: false})
     }
 
