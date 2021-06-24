@@ -106,6 +106,7 @@ export default class Controls extends React.Component {
             display: "flex",
             justifyContent: "center",
             width: "100%",
+            minWidth: "1080px",
             height: "200px",
             padding: "5px",
             background: "white",

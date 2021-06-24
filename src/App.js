@@ -144,7 +144,7 @@ export default class App extends React.Component {
     
     render() {
         return (
-            <div>
+            <div style={{minWidth: "1080px"}}>
                 <ContextMenu 
                     id={this.state.id} 
                     delete={this.deleteDispatch}

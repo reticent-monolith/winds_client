@@ -10,7 +10,8 @@ export default class DispatchCard extends React.Component {
         container: {
             display: "flex",
             width: "95%",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
+            margin: "0 auto"
         },
         time: {
             display: "flex",
