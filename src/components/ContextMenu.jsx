@@ -50,7 +50,7 @@ export default class ContextMenu extends React.Component {
                     style={{
                         top: yPos,
                         left: xPos,
-                        position: "absolute",
+                        position: "fixed",
                         zIndex: "5",
                         backgroundColor: config.colors.light,
                         border: "2px solid",

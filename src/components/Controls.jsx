@@ -2,14 +2,12 @@ import React from "react"
 import ReactModal from "react-modal"
 import {config} from "../config"
 import Button from 'react-bootstrap/Button';
-import DatePicker from "react-datepicker";
-
+import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { enGB } from 'date-fns/esm/locale'
 import Log from "../utilities/Log";
 
-// CSS Modules, react-datepicker-cssmodules.css
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
-
+registerLocale('enGB', enGB)
 export default class Controls extends React.Component {
     constructor(props) {
         super(props)
@@ -44,8 +42,8 @@ export default class Controls extends React.Component {
                 comment: ""
             },
             commentModalIsOpen: false,
-            startDate: new Date().toJSON(),
-            endDate: new Date().toJSON()
+            startDate: new Date(),
+            endDate: new Date()
         }
         this.styles.lineDiv[4] = {
             ...this.styles.lineDiv.base,
@@ -213,10 +211,11 @@ export default class Controls extends React.Component {
                     <DatePicker
                         selected={this.state.startDate}
                         dateFormat="yyyy-MM-dd"
+                        locale="enGB"
                         onChange={date => {
                             this.setState({
-                                startDate: Date.from(date).toJSON(),
-                                endDate: Date.from(date).toJSON()
+                                startDate: new Date(date),
+                                endDate: new Date(date)
                             })
                         }}
                     >
@@ -225,8 +224,9 @@ export default class Controls extends React.Component {
                     <DatePicker
                         selected={this.state.endDate}
                         dateFormat="yyyy-MM-dd"
+                        locale="enGB"
                         onChange={date => {
-                            this.setState({ endDate: Date.from(date).toJSON() })
+                            this.setState({ endDate: new Date(date) })
                         }}
                     >
                     </DatePicker>
@@ -235,9 +235,12 @@ export default class Controls extends React.Component {
                         style={this.styles.button}
                         variant="primary"
                         onClick={e => {
-                            Log.debug(this.state.startDate)
+                            Log.debug(new Date(this.state.startDate).toJSON())
                             Log.debug(this.state.endDate)
-                            this.props.getByRange(this.state.startDate, this.state.endDate)
+                            this.props.getByRange(
+                                new Date(this.state.startDate).toJSON().toString().split("T")[0], 
+                                new Date(this.state.endDate).toJSON().toString().split("T")[0]
+                            )
                         }}
                     >Apply</Button>
 

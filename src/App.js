@@ -77,7 +77,9 @@ export default class App extends React.Component {
 
     styles = {
         list: {
-            marginTop: "200px"
+            marginTop: "200px",
+            maxHeight: "calc(100vh-200px)",
+            overflowY: "scroll"
         },
         editModal: {
             overlay: {
@@ -416,7 +418,7 @@ export default class App extends React.Component {
                         }}>
                             <span>Comment</span>
                             <textarea
-                                value={this.state.currentlyEditing.comment}
+                                value={this.state.currentlyEditing.dateTime}
                                 onChange={e => {
                                     this.setState({
                                         ...this.state,
@@ -431,30 +433,35 @@ export default class App extends React.Component {
                     </div>
                 </Modal>
 
-
                 <Controls 
                     createDispatch={this.createDispatch}
                     purge={this.purgeDatabase}
                     getByRange={this.getDispatchesByRange}
                 />
+
                 {/* The dispatches from today as cards */}
-                <div style={this.styles.list}>
-
-
-                    {this.state.dispatches.map(d => {
-                        const dispatch = new Dispatch(d)
-                        return (
-                            <DispatchCard 
-                                key={dispatch._id}
-                                data={dispatch}
-                                mouseEnter={this.handleMouseEnter}
-                                mouseLeave={this.handleMouseLeave}
-                            />
-                        )
-                    })}
-
-
+                <div style={{
+                    position: "fixed",
+                    top: "200px",
+                    width: "100%",
+                    maxHeight: "80vh",
+                    overflowY: "scroll"
+                }}>
+                    <div>
+                        {this.state.dispatches.reverse().map(d => {
+                            const dispatch = new Dispatch(d)
+                            return (
+                                <DispatchCard 
+                                    key={dispatch._id}
+                                    data={dispatch}
+                                    mouseEnter={this.handleMouseEnter}
+                                    mouseLeave={this.handleMouseLeave}
+                                />
+                            )
+                        })}
+                    </div>
                 </div>
+
             </div>
         )
     }
@@ -472,7 +479,13 @@ export default class App extends React.Component {
 
     async getDispatchesByRange(start, end) {
         try {
-            const response = await axios.get(`${URL}bydaterange/${start}_${end}`)
+            const response = await axios.get(
+                `${URL}bydaterange`,
+                {params: {
+                    start: start,
+                    end: end
+                }}
+            )
             this.setState({dispatches: response.data.map( d => {
                 return new Dispatch(d)
             })})
@@ -492,7 +505,7 @@ export default class App extends React.Component {
         })
         try {
             await axios.post(`${URL}add`, dispatchPayload)
-            this.getDispatches()
+            this.getDispatches(TODAY)
         } catch (error) {
             Log.error(error)
         }
@@ -507,7 +520,7 @@ export default class App extends React.Component {
         })
         try {
             await axios.post(`${URL}update`, dispatch)
-            this.getDispatches()
+            this.getDispatches(TODAY)
         } catch (error) {
             Log.error(error)
         }
@@ -516,7 +529,7 @@ export default class App extends React.Component {
     async deleteDispatch(id) {
         try {
             await axios.post(`${URL}delete`, id)
-            this.getDispatches()
+            this.getDispatches(TODAY)
         } catch (error) {
             Log.error(error)
         }
@@ -525,7 +538,7 @@ export default class App extends React.Component {
     async purgeDatabase() {
         try {
             await axios.delete(`${URL}purge`)
-            this.getDispatches()
+            this.getDispatches(TODAY)
         } catch (error) {
             Log.error(error)
         }
@@ -534,7 +547,7 @@ export default class App extends React.Component {
     async getDispatchById(id) {
         try {
             const dispatch = await axios.get(`${URL}byid/${id}`)
-            this.getDispatches()
+            this.getDispatches(TODAY)
             return dispatch
         } catch (error) {
             Log.error(error)
