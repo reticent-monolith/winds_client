@@ -5,18 +5,13 @@ import RiderCard from "./RiderCard"
 
 
 export default class DispatchCard extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            showBox: false
-        }
-    }
 
     styles = {
         container: {
             display: "flex",
             width: "95%",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
+            margin: "0 auto"
         },
         time: {
             display: "flex",
@@ -39,7 +34,7 @@ export default class DispatchCard extends React.Component {
                 fontSize: "0.7em"
             },
             degrees: {
-
+                fontWeight: "bold"
             }
         }
     }
@@ -67,10 +62,12 @@ export default class DispatchCard extends React.Component {
 
     wind() {
         const speedStyle = this.props.data.windSpeed > 45 ? this.styles.wind.fastSpeed : this.styles.wind.speed
+        const cardinals = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"]
+        const direction = cardinals[Math.round(this.props.data.windDegrees / 22.5)]
         return (
             <div style={this.styles.wind}>
                 <span style={speedStyle}>{this.props.data.windSpeed} <span style={speedStyle}>mph</span></span>
-                <span style={this.styles.wind.degrees}>{this.props.data.windDegrees}°</span>
+                <span style={this.styles.wind.degrees}>{direction}</span>
             </div>
         )
     }
