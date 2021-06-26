@@ -11,8 +11,9 @@ import ContextMenu from "./components/ContextMenu";
 import Modal from 'react-modal'
 import { config } from "./config";
 
-
-const URL = "http://localhost:8080/"
+const DROPLET = "http://159.65.16.111:8080/"
+const LOCALHOST = "http://localhost:8080/"
+const URL = LOCALHOST
 const TODAY = new Date(Date.now()).toJSON().split("T")[0]
 
 document.addEventListener("contextmenu", e => {
@@ -21,6 +22,8 @@ document.addEventListener("contextmenu", e => {
 export default class App extends React.Component {
     constructor(props) {
         super(props)
+
+        this.wrapperRef = React.createRef()
 
         this.getDispatches = this.getDispatches.bind(this)
         this.createDispatch = this.createDispatch.bind(this)
@@ -68,7 +71,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-        this.getDispatches()
+        this.getDispatches(TODAY)
     }
 
     styles = {
@@ -434,27 +437,40 @@ export default class App extends React.Component {
                 />
                 {/* The dispatches from today as cards */}
                 <div style={this.styles.list}>
+
+
                     {this.state.dispatches.map(d => {
                         const dispatch = new Dispatch(d)
-                        if (dispatch.dateTime.split("T")[0] === TODAY) {
-                            return (
-                                <DispatchCard 
-                                    key={dispatch._id}
-                                    data={dispatch}
-                                    mouseEnter={this.handleMouseEnter}
-                                    mouseLeave={this.handleMouseLeave}
-                                />
-                            )
-                        } else return null
+                        return (
+                            <DispatchCard 
+                                key={dispatch._id}
+                                data={dispatch}
+                                mouseEnter={this.handleMouseEnter}
+                                mouseLeave={this.handleMouseLeave}
+                            />
+                        )
                     })}
+
+
                 </div>
             </div>
         )
     }
 
-    async getDispatches() {
+    async getDispatches(date) {
         try {
-            const response = await axios.get(`${URL}all`)
+            const response = await axios.get(`${URL}bydate/${date}`)
+            this.setState({dispatches: response.data.map( d => {
+                return new Dispatch(d)
+            })})
+        } catch (error) {
+            Log.error(error)
+        }
+    }
+
+    async getDispatchesByRange(start, end) {
+        try {
+            const response = await axios.get(`${URL}bydaterange/${start}_${end}`)
             this.setState({dispatches: response.data.map( d => {
                 return new Dispatch(d)
             })})
@@ -515,7 +531,7 @@ export default class App extends React.Component {
 
     async getDispatchById(id) {
         try {
-            const dispatch = await axios.get(`${URL}get/${id}`)
+            const dispatch = await axios.get(`${URL}byid/${id}`)
             this.getDispatches()
             return dispatch
         } catch (error) {

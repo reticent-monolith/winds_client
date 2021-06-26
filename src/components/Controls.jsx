@@ -199,6 +199,9 @@ export default class Controls extends React.Component {
     render() {
         return (
             <div style={this.styles.container}>
+                <div style={this.styles.buttonContainer}>
+                    
+                </div>
                 <div style={this.styles.lineContainer}>
                     <div style={this.styles.topLabels}>
                         <span style={this.styles.topLabels.weight}>Weight</span>
@@ -494,6 +497,7 @@ export default class Controls extends React.Component {
                         onClick={this.props.purge}
                     >Purge</Button>
                 </div>
+                
                 
             </div>
         )
