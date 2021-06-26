@@ -2,6 +2,13 @@ import React from "react"
 import ReactModal from "react-modal"
 import {config} from "../config"
 import Button from 'react-bootstrap/Button';
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+import Log from "../utilities/Log";
+
+// CSS Modules, react-datepicker-cssmodules.css
+// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -36,7 +43,9 @@ export default class Controls extends React.Component {
                 btRadio: "",
                 comment: ""
             },
-            commentModalIsOpen: false
+            commentModalIsOpen: false,
+            startDate: new Date().toJSON(),
+            endDate: new Date().toJSON()
         }
         this.styles.lineDiv[4] = {
             ...this.styles.lineDiv.base,
@@ -200,7 +209,38 @@ export default class Controls extends React.Component {
         return (
             <div style={this.styles.container}>
                 <div style={this.styles.buttonContainer}>
-                    
+                    {/* date picker */}
+                    <DatePicker
+                        selected={this.state.startDate}
+                        dateFormat="yyyy-MM-dd"
+                        onChange={date => {
+                            this.setState({
+                                startDate: Date.from(date).toJSON(),
+                                endDate: Date.from(date).toJSON()
+                            })
+                        }}
+                    >
+                    </DatePicker>
+
+                    <DatePicker
+                        selected={this.state.endDate}
+                        dateFormat="yyyy-MM-dd"
+                        onChange={date => {
+                            this.setState({ endDate: Date.from(date).toJSON() })
+                        }}
+                    >
+                    </DatePicker>
+
+                    <Button
+                        style={this.styles.button}
+                        variant="primary"
+                        onClick={e => {
+                            Log.debug(this.state.startDate)
+                            Log.debug(this.state.endDate)
+                            this.props.getByRange(this.state.startDate, this.state.endDate)
+                        }}
+                    >Apply</Button>
+
                 </div>
                 <div style={this.styles.lineContainer}>
                     <div style={this.styles.topLabels}>

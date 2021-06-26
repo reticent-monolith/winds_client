@@ -31,6 +31,7 @@ export default class App extends React.Component {
         this.deleteDispatch = this.deleteDispatch.bind(this)
         this.purgeDatabase = this.purgeDatabase.bind(this)
         this.getDispatchById = this.getDispatchById.bind(this)
+        this.getDispatchesByRange = this.getDispatchesByRange.bind(this)
 
         Modal.setAppElement('#root');
 
@@ -434,6 +435,7 @@ export default class App extends React.Component {
                 <Controls 
                     createDispatch={this.createDispatch}
                     purge={this.purgeDatabase}
+                    getByRange={this.getDispatchesByRange}
                 />
                 {/* The dispatches from today as cards */}
                 <div style={this.styles.list}>
