@@ -1,6 +1,7 @@
 import React from 'react'
 import { config } from '../config';
 import Button from 'react-bootstrap/esm/Button';
+import Log from "../utilities/Log"
 
 export default class ContextMenu extends React.Component {
     constructor(props) {
@@ -12,6 +13,7 @@ export default class ContextMenu extends React.Component {
             id: ""
         }
         this.handleEditClick = this.handleEditClick.bind(this)
+        this.handleDeleteClick = this.handleDeleteClick.bind(this)
     }
 
     componentDidMount() {
@@ -78,11 +80,7 @@ export default class ContextMenu extends React.Component {
                         style={{
                             width: "80px"
                         }}
-                        onClick={() => {
-                            if (this.state.id !== "") {
-                                this.props.delete(this.state.id)
-                            }
-                        }}
+                        onClick={this.handleDeleteClick}
                     >
                         Delete
                     </Button>
@@ -101,7 +99,14 @@ export default class ContextMenu extends React.Component {
                 this.props.openEditModal(dispatch)
             }
             
+        } else {
+            Log.debug("No ID passed to handleClick")
         }
     }
 
+    async handleDeleteClick() {
+        if (this.state.id !== "") {
+            this.props.delete(this.state.id)
+        }
+    }
 }
