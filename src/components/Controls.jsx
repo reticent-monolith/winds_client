@@ -6,9 +6,12 @@ import { enGB } from 'date-fns/esm/locale'
 import {config} from "../config"
 import Log from "../utilities/Log";
 import CommentModal from "../components/modals/CommentModal"
+import MqttService from "../mqtt/MqttService";
 
 // Register locale for DatePickers
 registerLocale('enGB', enGB)
+
+const WS_URL = "192.168.1.133:8000"
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -63,6 +66,7 @@ export default class Controls extends React.Component {
             startDate: new Date(),
             endDate: new Date()
         }
+
 
         this.styles = {
             lineDiv: {
@@ -167,6 +171,11 @@ export default class Controls extends React.Component {
                 height: "40px"
             }
         }
+    }
+
+    componentDidMount() {
+        this.client = new MqttService(WS_URL)
+
     }
 
     //   +-------------+
