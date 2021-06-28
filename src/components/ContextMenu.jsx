@@ -1,6 +1,6 @@
 import React from 'react'
-import { config } from '../config';
 import Button from 'react-bootstrap/esm/Button';
+import { config } from '../config';
 import Log from "../utilities/Log"
 
 export default class ContextMenu extends React.Component {
@@ -12,6 +12,8 @@ export default class ContextMenu extends React.Component {
             showMenu: false,
             id: ""
         }
+
+        // TODO: can these not be arrow functions?
         this.handleEditClick = this.handleEditClick.bind(this)
         this.handleDeleteClick = this.handleDeleteClick.bind(this)
     }
@@ -44,7 +46,6 @@ export default class ContextMenu extends React.Component {
 
     render() {
         const { showMenu, xPos, yPos } = this.state;
-
         if (showMenu)
             return (
                 <div

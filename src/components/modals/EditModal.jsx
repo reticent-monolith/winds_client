@@ -13,21 +13,37 @@ export default class EditModal extends React.Component {
                         weight: 0,
                         trolley: 0,
                         addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
                     },
                     3: {
                         weight: 0,
                         trolley: 0,
                         addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
                     },
                     2: {
                         weight: 0,
                         trolley: 0,
                         addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
                     },
                     1: {
                         weight: 0,
                         trolley: 0,
                         addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
                     }
                 },
                 windSpeed: "",
@@ -379,7 +395,7 @@ export default class EditModal extends React.Component {
                     }}>
                         <span>Comment</span>
                         <textarea
-                            value={this.state.currentlyEditing.dateTime}
+                            value={this.state.currentlyEditing.comment}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,

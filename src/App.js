@@ -1,31 +1,34 @@
 import React from "react"
+import Modal from 'react-modal'
 import axios from "axios"
-import "./App.css"
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import Log from "./utilities/Log"
 import Controls from "./components/Controls"
 import DispatchCard from "./components/DispatchCard"
 import Dispatch from "./models/Dispatch"
 import ContextMenu from "./components/ContextMenu";
-import Modal from 'react-modal'
-import { config } from "./config";
 import EditModal from "./components/modals/EditModal";
+import "./App.css"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
+// Set where the application is communicating with
 const DROPLET = "http://159.65.16.111:8080/"
 const LOCALHOST = "http://localhost:8080/"
 const URL = LOCALHOST
+
+// Today's date for initial getDispatches call
 const TODAY = new Date(Date.now()).toJSON().split("T")[0]
 
+// Stop the normal right click behaviour so ContextMenu can happen
 document.addEventListener("contextmenu", e => {
     e.preventDefault()
 })
+
 export default class App extends React.Component {
     constructor(props) {
         super(props)
 
-        this.wrapperRef = React.createRef()
-
+        // Create bindings for the async network methods
+        // TODO: can these not be arrow functions to remove need to bind?
         this.getDispatches = this.getDispatches.bind(this)
         this.createDispatch = this.createDispatch.bind(this)
         this.updateDispatch = this.updateDispatch.bind(this)
@@ -34,6 +37,7 @@ export default class App extends React.Component {
         this.getDispatchById = this.getDispatchById.bind(this)
         this.getDispatchesByRange = this.getDispatchesByRange.bind(this)
 
+        // For Modal accessibility
         Modal.setAppElement('#root');
 
         this.state = {
@@ -53,10 +57,23 @@ export default class App extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.getDispatches(TODAY)
+    //   +-------------+
+    //  | App Methods |
+    // +-------------+
+
+    //  get the id of the dispatch the mouse is currently over so the ContextMenu knows what it's being called on
+    handleMouseEnter = (id) => {
+        this.setState({
+            id: id 
+        })
+    }
+    handleMouseLeave = () => {
+        this.setState({
+            id: ""
+        })
     }
 
+    // Handle the opening and closing of the EditModal, passing the dispatch the ContextMenu was called on
     openEditModal = (dispatch) => {
         this.setState({
             editModalIsOpen: true,
@@ -69,25 +86,34 @@ export default class App extends React.Component {
             editModalIsOpen: false
         })
     }
+
+    //   +-----------------+
+    //  | React Lifecycle |
+    // +-----------------+
+
+    // Get today's dispatches when page is opened
+    componentDidMount() {
+        this.getDispatches(TODAY)
+    }
     
     render() {
+        const {dispatches, id, editModalIsOpen, editing} = this.state
         return (
             <div style={{minWidth: "1080px"}}>
                 <ContextMenu 
-                    id={this.state.id} 
+                    id={id} 
                     delete={this.deleteDispatch}
-                    dispatches={this.state.dispatches}
+                    dispatches={dispatches}
                     get={this.getDispatchById}
                     openEditModal={this.openEditModal}
                 />
 
                 <EditModal 
-                    isOpen={this.state.editModalIsOpen}
+                    isOpen={editModalIsOpen}
                     update={this.updateDispatch}
                     close={this.closeEditModal}
-                    editing={this.state.editing}
+                    editing={editing}
                 />
-                
 
                 <Controls 
                     createDispatch={this.createDispatch}
@@ -104,7 +130,7 @@ export default class App extends React.Component {
                     overflowY: "scroll"
                 }}>
                     <div>
-                        {this.state.dispatches.reverse().map(d => {
+                        {dispatches.reverse().map(d => {
                             const dispatch = new Dispatch(d)
                             return (
                                 <DispatchCard 
@@ -121,6 +147,10 @@ export default class App extends React.Component {
             </div>
         )
     }
+
+    //   +-----------------+
+    //  | Network Methods |
+    // +-----------------+
 
     async getDispatches(date) {
         try {
@@ -208,17 +238,5 @@ export default class App extends React.Component {
         } catch (error) {
             Log.error(error)
         }
-    }
-
-    handleMouseEnter = (id) => {
-        this.setState({
-            id: id 
-        })
-    }
-
-    handleMouseLeave = () => {
-        this.setState({
-            id: ""
-        })
     }
 }
