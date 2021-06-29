@@ -11,7 +11,7 @@ import MqttService from "../mqtt/MqttService";
 // Register locale for DatePickers
 registerLocale('enGB', enGB)
 
-const WS_URL = "192.168.1.133:8000"
+const WS_URL = "wss://mqtt.winds.dev"
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -66,7 +66,6 @@ export default class Controls extends React.Component {
             startDate: new Date(),
             endDate: new Date()
         }
-
 
         this.styles = {
             lineDiv: {
@@ -175,7 +174,6 @@ export default class Controls extends React.Component {
 
     componentDidMount() {
         this.client = new MqttService(WS_URL)
-
     }
 
     //   +-------------+

@@ -11,9 +11,9 @@ import "./App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Set where the application is communicating with
-const DROPLET = "http://159.65.16.111:8080/"
-const LOCALHOST = "http://localhost:8080/"
-const URL = LOCALHOST
+const DROPLET = "https://159.65.16.111:8080/"
+const HTTPS = "https://back.winds.dev/"
+const URL = HTTPS
 
 // Today's date for initial getDispatches call
 const TODAY = new Date(Date.now()).toJSON().split("T")[0]
@@ -130,7 +130,7 @@ export default class App extends React.Component {
                     overflowY: "scroll"
                 }}>
                     <div>
-                        {dispatches.reverse().map(d => {
+                        {dispatches.map(d => {
                             const dispatch = new Dispatch(d)
                             return (
                                 <DispatchCard 
@@ -155,7 +155,7 @@ export default class App extends React.Component {
     async getDispatches(date) {
         try {
             const response = await axios.get(`${URL}bydate/${date}`)
-            this.setState({dispatches: response.data.map( d => {
+            this.setState({dispatches: response.data.reverse().map( d => {
                 return new Dispatch(d)
             })})
         } catch (error) {
