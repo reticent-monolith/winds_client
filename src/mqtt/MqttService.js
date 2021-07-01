@@ -4,7 +4,13 @@ import Log from "../utilities/Log";
 export default class MqttService {
     constructor(websocketUrl) {
         Log.debug("MQTT Client connecting...")
-        this.client = mqtt.connect(websocketUrl)
+        try {     
+            this.client = mqtt.connect(websocketUrl)
+        } catch (err) {
+            Log.error(err.stack)
+            process.exit()
+        }
+        Log.debug("MQTT Client connected successfully")
 
         // When passing async functions as event listeners, make sure to have a try catch block
 
@@ -12,11 +18,7 @@ export default class MqttService {
 
             console.log("Starting");
             try {
-                await this.client.publish("wow/so/cool", "It works!");
-                // This line doesn't run until the server responds to the publish
-                await this.client.end();
-                // This line doesn't run until the client has disconnected without error
-                console.log("Done");
+                this.client.subscribe("test");
             } catch (e){
                 // Do something about it!
                 console.log(e.stack);
@@ -25,5 +27,9 @@ export default class MqttService {
         }
 
         this.client.on("connect", doStuff);
+        this.client.on("message", (topic, message) => {
+            console.log(message.toString())
+        })
     }
 }
+

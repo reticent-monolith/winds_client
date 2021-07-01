@@ -156,6 +156,7 @@ export default class EditModal extends React.Component {
                                 <input
                                     value={this.state.currentlyEditing.riders[l].weight}
                                     style={this.styles.inputS}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -251,6 +252,7 @@ export default class EditModal extends React.Component {
                                 <input
                                     value={this.state.currentlyEditing.riders[l].addedWeight}
                                     style={this.styles.inputS}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -275,6 +277,7 @@ export default class EditModal extends React.Component {
                                 <input
                                     value={this.state.currentlyEditing.riders[l].speed}
                                     style={this.styles.inputS}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -295,6 +298,7 @@ export default class EditModal extends React.Component {
                                 <input
                                     value={this.state.currentlyEditing.riders[l].trolley}
                                     style={this.styles.inputS}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -322,6 +326,7 @@ export default class EditModal extends React.Component {
                         <input
                             value={this.state.currentlyEditing.windSpeed}
                             style={this.styles.inputS}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
@@ -340,6 +345,7 @@ export default class EditModal extends React.Component {
                         <input
                             value={this.state.currentlyEditing.windDegrees}
                             style={this.styles.inputS}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
@@ -358,6 +364,7 @@ export default class EditModal extends React.Component {
                         <input
                             value={this.state.currentlyEditing.windsInstructor}
                             style={this.styles.inputL}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
@@ -376,6 +383,7 @@ export default class EditModal extends React.Component {
                         <input
                             value={this.state.currentlyEditing.btRadio}
                             style={this.styles.inputL}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,

@@ -11,7 +11,7 @@ import MqttService from "../mqtt/MqttService";
 // Register locale for DatePickers
 registerLocale('enGB', enGB)
 
-const WS_URL = "wss://mqtt.winds.dev"
+const WS_URL = "ws://192.168.1.133:8883"
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -313,6 +313,7 @@ export default class Controls extends React.Component {
                                     style={this.styles.input}
                                     type="number"
                                     value={dispatch.riders[line].weight === 0 ? "" : dispatch.riders[line].weight}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -413,6 +414,7 @@ export default class Controls extends React.Component {
                                     style={this.styles.input}
                                     type="number"
                                     value={dispatch.riders[line].addedWeight === 0 ? "" : dispatch.riders[line].addedWeight}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -438,6 +440,7 @@ export default class Controls extends React.Component {
                                     style={this.styles.input}
                                     type="number"
                                     value={dispatch.riders[line].trolley === 0 ? "" : dispatch.riders[line].trolley}
+                                    onFocus={e => e.currentTarget.select()}
                                     onChange={e => {
                                         this.setState({
                                             ...this.state,
@@ -467,6 +470,7 @@ export default class Controls extends React.Component {
                             type="number"
                             style={this.styles.input}
                             value={dispatch.windSpeed}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state, 
@@ -486,6 +490,7 @@ export default class Controls extends React.Component {
                             type="number"
                             style={this.styles.input}
                             value={dispatch.windDegrees}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
@@ -506,6 +511,7 @@ export default class Controls extends React.Component {
                             type="text"
                             style={this.styles.inputL}
                             value={dispatch.windsInstructor}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
@@ -525,6 +531,7 @@ export default class Controls extends React.Component {
                             type="text"
                             style={this.styles.inputL}
                             value={dispatch.btRadio}
+                            onFocus={e => e.currentTarget.select()}
                             onChange={e => {
                                 this.setState({
                                     ...this.state,
