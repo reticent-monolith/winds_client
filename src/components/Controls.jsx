@@ -241,6 +241,7 @@ export default class Controls extends React.Component {
             })
             this.dataReceivedSound.play()
         } else {
+            Log.debug(`Confimation message: ${message.toString()}`)
             this.setState({
                 ...this.state,
                 confirmations: {
@@ -297,6 +298,7 @@ export default class Controls extends React.Component {
                 1: false
             }
         })
+        this.client.send("all", "clear", "clear")
     }
 
     openCommentModal = () => {
