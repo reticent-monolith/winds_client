@@ -7,6 +7,8 @@ import {config} from "../config"
 import Log from "../utilities/Log";
 import CommentModal from "../components/modals/CommentModal"
 import MqttService from "../mqtt/MqttService";
+import drip from "../res/sounds/drip.mp3"
+import UIfx from "uifx"
 
 // Register locale for DatePickers
 registerLocale('enGB', enGB)
@@ -62,9 +64,17 @@ export default class Controls extends React.Component {
                 btRadio: "",
                 comment: ""
             },
+            confirmations: {
+                4: false,
+                3: false,
+                2: false,
+                1: false
+            },
             commentModalIsOpen: false,
             startDate: new Date(),
             endDate: new Date()
+
+                
         }
 
         this.styles = {
@@ -85,6 +95,15 @@ export default class Controls extends React.Component {
             },
             input: {
                 width: "40px",
+                borderRadius: "5px",
+                border: "none",
+                textAlign: "center",
+                height: "1.2em",
+                fontSize: "1.2em",
+                backgroundColor: config.colors.light
+            },
+            inputL: {
+                width: "80px",
                 borderRadius: "5px",
                 border: "none",
                 textAlign: "center",
@@ -149,11 +168,12 @@ export default class Controls extends React.Component {
             
             topLabels: {
                 fontSize: "0.7em",
+                width: "90%",
                 textAlign: "center",
                 display: "flex",
                 padding: "0 15px 0 30px",
                 justifyContent: "space-between",
-                weight: {width: "44px"},
+                weight: {width: "34px"},
                 front: {width: "60px"},
                 middle: {width: "60px"},
                 rear: {width: "60px"},
@@ -168,17 +188,75 @@ export default class Controls extends React.Component {
             },
             button: {
                 height: "40px"
+            },
+            confirmed: {
+                fontSize: "0.7em",
+                fontWeight: "bold"
             }
         }
-    }
 
-    componentDidMount() {
-        this.client = new MqttService(WS_URL)
+        // set up drip sound effect
+        this.confirmSound = new UIfx(
+            drip,
+            {volume: 1}
+        )
+        this.unconfirmSound = new UIfx(
+            drip,
+            {volume: 1}
+        );
+        this.dataReceivedSound = new UIfx(
+            drip,
+            {volume: 1}
+        );
     }
 
     //   +-------------+
     //  | App Methods |
     // +-------------+
+
+    handleMessage = (topicString, message) => {
+        // split topic for line and purpose
+        let [line, topic] = topicString.split("/")
+
+        try {
+            line = parseInt(line, 10)
+        } catch (err) {
+            Log.error(err)
+            return
+        }
+
+        if (topic !== "confirmation") {
+            this.setState({
+                ...this.state,
+                dispatch: {
+                    ...this.state.dispatch,
+                    riders: {
+                        ...this.state.dispatch.riders,
+                        [line]: {
+                            ...this.state.dispatch.riders[line],
+                            [topic]: parseInt(message.toString())
+                        }
+                    }
+                }
+            })
+            this.dataReceivedSound.play()
+        } else {
+            this.setState({
+                ...this.state,
+                confirmations: {
+                    ...this.state.confirmations,
+                    [line]: message.toString() === "true" ? true : false
+                }
+            })
+            if (message.toString() === "true") {
+                this.confirmSound.play()
+            } else {
+                this.unconfirmSound.play()
+            }
+        }
+
+    }
+
 
     clearInputs = () => {
         this.setState({
@@ -211,7 +289,13 @@ export default class Controls extends React.Component {
                 windsInstructor: "",
                 btRadio: "",
                 comment: ""
-            } 
+            },
+            confirmations: {
+                4: false,
+                3: false,
+                2: false,
+                1: false
+            }
         })
     }
 
@@ -237,9 +321,32 @@ export default class Controls extends React.Component {
         })
     }
 
+    checkIfConfirmed = line => {
+        let style = {
+            fontSize: "0.7em",
+            fontWeight: "bold",
+            color: "white"
+        }
+        if (this.state.confirmations[line] === true) {
+            style.visibility = "visible"
+        } else {
+            style.visibility = "hidden"
+        }
+        return style
+    }
+
     //   +-----------------+
     //  | React Lifecycle |
     // +-----------------+
+
+    componentDidMount() {
+        this.client = new MqttService(WS_URL, this.handleMessage)
+    }
+
+    componentWillUnmount() {
+        this.client.end()
+    }
+
 
     render() {
         const {dispatch, startDate, endDate} = this.state
@@ -350,6 +457,7 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
+                                        this.client.send(line, "frontSlider", e.target.value)
                                     }}
                                 >
                                     <option value="BLACK">S1</option>
@@ -377,6 +485,7 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
+                                        this.client.send(line, "middleSlider", e.target.value)
                                     }}
                                 >
                                     <option value="OLD_RED">SO2</option>
@@ -403,6 +512,7 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
+                                        this.client.send(line, "rearSlider", e.target.value)
                                     }}
                                 >
                                     <option value="YELLOW">S3</option>
@@ -432,7 +542,9 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
+                                       // this.client.send(line, "addedWeight", e.target.value)
                                     }}
+                                    onBlur={e=>{this.client.send(line, "frontSlider", e.target.value)}}
                                 ></input>
 
                                 {/* trolley */}
@@ -457,6 +569,11 @@ export default class Controls extends React.Component {
                                         })
                                     }}
                                 ></input>
+
+                                <span
+                                    style={this.checkIfConfirmed(line)}
+                                >READY</span> 
+
                             </div>
                         )
                     })}
