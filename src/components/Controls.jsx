@@ -263,15 +263,10 @@ export default class Controls extends React.Component {
             Log.error(err)
             return
         }
-
-        Log.debug("Receiving")
-        console.log(line)
-        console.log(topic)
         if (topic === "newRider") {
             message = JSON.parse(message)
             message.weight = parseInt( message.weight)
             message.trolley = parseInt( message.trolley)
-            console.log(message)
             this.setState({
                 ...this.state,
                 dispatch: {
@@ -285,8 +280,6 @@ export default class Controls extends React.Component {
                     }
                 }
             })
-            console.log(this.state.dispatch.riders[line])
-            
             // this.dataReceivedSound.play()
         } else {
             Log.debug(`Confimation message: ${message.toString()}`)
