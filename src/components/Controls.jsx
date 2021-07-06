@@ -337,7 +337,7 @@ export default class Controls extends React.Component {
                 1: false
             }
         })
-        this.client.send("all", "clear", "clear")
+        this.client.send("clear", "clear")
     }
 
     openCommentModal = () => {
