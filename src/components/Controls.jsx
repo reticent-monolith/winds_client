@@ -195,7 +195,13 @@ export default class Controls extends React.Component {
             confirmed: {
                 fontSize: "0.7em",
                 fontWeight: "bold"
-            }
+            },
+            dateContainer: {
+                display: "none",
+                flexDirection: "column",
+                width: "200px",
+                justifyContent: "space-between"
+            },
         }
 
         // set up drip sound effect
@@ -229,6 +235,14 @@ export default class Controls extends React.Component {
         }
 
         if (topic !== "confirmation") {
+
+            Log.debug("RECEIVING FROM BT CLIENT SEND BUTTON")
+            console.log(line, typeof line)
+            console.log(topic, typeof topic)
+            console.log(message.toString(), typeof message.toString())
+            console.log("Message above will be parsed to an int")
+            console.log()
+
             this.setState({
                 ...this.state,
                 dispatch: {
@@ -242,7 +256,7 @@ export default class Controls extends React.Component {
                     }
                 }
             })
-            this.dataReceivedSound.play()
+            // this.dataReceivedSound.play()
         } else {
             Log.debug(`Confimation message: ${message.toString()}`)
             this.setState({
@@ -362,7 +376,9 @@ export default class Controls extends React.Component {
                     close={this.closeCommentModal}
                     editComment={this.editComment}
                 />
-                <div style={this.styles.buttonContainer}>
+
+
+                <div style={this.styles.dateContainer}>
                     {/* date picker */}
                     <DatePicker
                         selected={startDate}
@@ -399,8 +415,9 @@ export default class Controls extends React.Component {
                             )
                         }}
                     >Apply</Button>
-
                 </div>
+
+
                 <div style={this.styles.lineContainer}>
                     <div style={this.styles.topLabels}>
                         <span style={this.styles.topLabels.weight}>Weight</span>
@@ -435,7 +452,7 @@ export default class Controls extends React.Component {
                                                     ...dispatch.riders,
                                                     [line]: {
                                                         ...dispatch.riders[line],
-                                                        weight: e.target.value
+                                                        weight: parseInt(e.target.value)
                                                     }
                                                 }
                                             }
@@ -539,7 +556,7 @@ export default class Controls extends React.Component {
                                                     ...dispatch.riders,
                                                     [line]: {
                                                         ...dispatch.riders[line],
-                                                        addedWeight: e.target.value,
+                                                        addedWeight: parseInt(e.target.value),
                                                         frontSlider: null,
                                                         middleSlider: null,
                                                         rearSlider: null
@@ -566,7 +583,7 @@ export default class Controls extends React.Component {
                                                     ...dispatch.riders,
                                                     [line]: {
                                                         ...dispatch.riders[line],
-                                                        trolley: e.target.value
+                                                        trolley: parseInt(e.target.value)
                                                     }
                                                 }
                                             }
@@ -597,7 +614,7 @@ export default class Controls extends React.Component {
                                     ...this.state, 
                                     dispatch: {
                                         ...dispatch,
-                                        windSpeed: e.target.value
+                                        windSpeed: parseInt(e.target.value)
                                     }
                                 })
                             }}
@@ -617,7 +634,7 @@ export default class Controls extends React.Component {
                                     ...this.state,
                                     dispatch: {
                                         ...dispatch,
-                                        windDegrees: e.target.value
+                                        windDegrees: parseInt(e.target.value)
                                     }
                                 })
                             }}
@@ -687,9 +704,24 @@ export default class Controls extends React.Component {
                     >Clear</Button>
                     <Button
                         style={this.styles.button}
-                        variant="danger"
-                        onClick={this.props.purge}
-                    >Purge</Button>
+                        variant="primary"
+                        onClick={() => {
+
+                            Log.debug("SENDING FROM RESEND")
+                            console.log(this.state.dispatch.riders[4])
+                            console.log()
+
+                            Object.entries(this.state.dispatch.riders).forEach((key, index) => {
+                                Object.entries(key[1]).forEach((k, i) => {
+                                    this.client.send(
+                                        key[0],
+                                        `${k[0]}again`,
+                                        k[1]
+                                    )
+                                })
+                            })
+                        }}
+                    >Resend</Button>
                 </div>
             </div>
         )
