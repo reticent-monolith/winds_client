@@ -96,20 +96,23 @@ export default class Controls extends React.Component {
             input: {
                 width: "40px",
                 borderRadius: "5px",
-                border: "none",
+                border: "1px solid",
                 textAlign: "center",
                 height: "1.2em",
                 fontSize: "1.2em",
-                backgroundColor: config.colors.light
+                backgroundColor: config.colors.light,
+                borderColor: config.colors.dark
+
             },
             inputL: {
                 width: "80px",
                 borderRadius: "5px",
-                border: "none",
+                border: "1px solid",
                 textAlign: "center",
                 height: "1.2em",
                 fontSize: "1.2em",
-                backgroundColor: config.colors.light
+                backgroundColor: config.colors.light,
+                borderColor: config.colors.dark
             },
             select: {
                 width: "60px",
@@ -544,9 +547,8 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
-                                       // this.client.send(line, "addedWeight", e.target.value)
                                     }}
-                                    onBlur={e=>{this.client.send(line, "frontSlider", e.target.value)}}
+                                    onBlur={e=>{this.client.send(line, "addedWeight", e.target.value)}}
                                 ></input>
 
                                 {/* trolley */}
