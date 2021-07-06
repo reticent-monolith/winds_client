@@ -383,10 +383,65 @@ export default class Controls extends React.Component {
 
     componentDidMount() {
         this.client = new MqttService(WS_URL, this.handleMessage)
+        this.setState({
+            ...this.state,
+            dispatch: JSON.parse(localStorage.getItem("savedData")) || {
+                riders: {
+                    4: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
+                    },
+                    3: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
+                    },
+                    2: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
+                    },
+                    1: {
+                        weight: 0,
+                        trolley: 0,
+                        addedWeight: 0,
+                        frontSlider: "",
+                        middleSlider: "",
+                        rearSlider: "",
+                        speed: 0
+                    }
+                },
+                windSpeed: "",
+                windDegrees: "",
+                windsInstructor: "",
+                btRadio: "",
+                comment: ""
+            }
+        })
     }
 
     componentWillUnmount() {
         this.client.end()
+    }
+
+    componentDidUpdate() {
+        const savedData = this.state
+        delete savedData.dispatch.startDate
+        delete savedData.dispatch.endDate
+        localStorage.setItem("savedData", JSON.stringify(this.state.dispatch))
     }
 
 
