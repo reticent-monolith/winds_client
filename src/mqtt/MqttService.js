@@ -14,7 +14,7 @@ export default class MqttService {
         this.client.on("connect", () => {
             Log.debug("MQTT Client connected successfully!")
             try {
-                this.client.subscribe(["+/weight", "+/trolley", "+/confirmation", "+/ping"])
+                this.client.subscribe(["+/newRider", "+/confirmation", "+/ping"])
             } catch (err) {
                 Log.error(err.stack)
                 process.exit()
@@ -26,8 +26,8 @@ export default class MqttService {
         })
     }
 
-    async send(line, purpose, message) {
-        this.client.publish(`${line}/${purpose}`, message)
+    async send(purpose, message) {
+        this.client.publish(purpose, message)
     }
 
     end() {

@@ -223,6 +223,36 @@ export default class Controls extends React.Component {
     //  | App Methods |
     // +-------------+
 
+    sendToBT = () => {
+        const payload = {
+            4: {
+               frontSlider: this.state.dispatch.riders[4].frontSlider,
+               middleSlider: this.state.dispatch.riders[4].middleSlider, 
+               rearSlider: this.state.dispatch.riders[4].rearSlider, 
+               addedWeight: this.state.dispatch.riders[4].addedWeight
+            },
+            3: {
+                frontSlider: this.state.dispatch.riders[3].frontSlider,
+                middleSlider: this.state.dispatch.riders[3].middleSlider,
+                rearSlider: this.state.dispatch.riders[3].rearSlider,
+                addedWeight: this.state.dispatch.riders[3].addedWeight
+            },
+            2: {
+                frontSlider: this.state.dispatch.riders[2].frontSlider,
+                middleSlider: this.state.dispatch.riders[2].middleSlider,
+                rearSlider: this.state.dispatch.riders[2].rearSlider,
+                addedWeight: this.state.dispatch.riders[2].addedWeight
+            },
+            1: {
+                frontSlider: this.state.dispatch.riders[1].frontSlider,
+                middleSlider: this.state.dispatch.riders[1].middleSlider,
+                rearSlider: this.state.dispatch.riders[1].rearSlider,
+                addedWeight: this.state.dispatch.riders[1].addedWeight
+            },
+        }
+        this.client.send("setups", JSON.stringify(payload))
+    }
+
     handleMessage = (topicString, message) => {
         // split topic for line and purpose
         let [line, topic] = topicString.split("/")
@@ -234,15 +264,14 @@ export default class Controls extends React.Component {
             return
         }
 
-        if (topic !== "confirmation") {
-
-            Log.debug("RECEIVING FROM BT CLIENT SEND BUTTON")
-            console.log(line, typeof line)
-            console.log(topic, typeof topic)
-            console.log(message.toString(), typeof message.toString())
-            console.log("Message above will be parsed to an int")
-            console.log()
-
+        Log.debug("Receiving")
+        console.log(line)
+        console.log(topic)
+        if (topic === "newRider") {
+            message = JSON.parse(message)
+            message.weight = parseInt( message.weight)
+            message.trolley = parseInt( message.trolley)
+            console.log(message)
             this.setState({
                 ...this.state,
                 dispatch: {
@@ -251,11 +280,13 @@ export default class Controls extends React.Component {
                         ...this.state.dispatch.riders,
                         [line]: {
                             ...this.state.dispatch.riders[line],
-                            [topic]: parseInt(message.toString())
+                            ...message
                         }
                     }
                 }
             })
+            console.log(this.state.dispatch.riders[line])
+            
             // this.dataReceivedSound.play()
         } else {
             Log.debug(`Confimation message: ${message.toString()}`)
@@ -272,9 +303,7 @@ export default class Controls extends React.Component {
                 this.unconfirmSound.play()
             }
         }
-
     }
-
 
     clearInputs = () => {
         this.setState({
@@ -353,6 +382,7 @@ export default class Controls extends React.Component {
         }
         return style
     }
+
 
     //   +-----------------+
     //  | React Lifecycle |
@@ -479,7 +509,6 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
-                                        this.client.send(line, "frontSlider", e.target.value)
                                     }}
                                 >
                                     <option value="BLACK">S1</option>
@@ -507,7 +536,6 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
-                                        this.client.send(line, "middleSlider", e.target.value)
                                     }}
                                 >
                                     <option value="OLD_RED">SO2</option>
@@ -534,7 +562,6 @@ export default class Controls extends React.Component {
                                                 }
                                             }
                                         })
-                                        this.client.send(line, "rearSlider", e.target.value)
                                     }}
                                 >
                                     <option value="YELLOW">S3</option>
@@ -565,7 +592,6 @@ export default class Controls extends React.Component {
                                             }
                                         })
                                     }}
-                                    onBlur={e=>{this.client.send(line, "addedWeight", e.target.value)}}
                                 ></input>
 
                                 {/* trolley */}
@@ -691,6 +717,16 @@ export default class Controls extends React.Component {
                 <div style={this.styles.buttonContainer}>
                     <Button
                         style={this.styles.button}
+                        variant="primary"
+                        onClick={this.sendToBT}
+                    >Send to Big Top</Button>
+                    <Button
+                        style={this.styles.button}
+                        variant="primary"
+                        onClick={this.resendToBT}
+                    >Resend</Button>
+                    <Button
+                        style={this.styles.button}
                         variant="success"
                         onClick={e => {
                             this.props.createDispatch(dispatch)
@@ -702,26 +738,6 @@ export default class Controls extends React.Component {
                         variant="warning"
                         onClick={this.clearInputs}
                     >Clear</Button>
-                    <Button
-                        style={this.styles.button}
-                        variant="primary"
-                        onClick={() => {
-
-                            Log.debug("SENDING FROM RESEND")
-                            console.log(this.state.dispatch.riders[4])
-                            console.log()
-
-                            Object.entries(this.state.dispatch.riders).forEach((key, index) => {
-                                Object.entries(key[1]).forEach((k, i) => {
-                                    this.client.send(
-                                        key[0],
-                                        `${k[0]}again`,
-                                        k[1]
-                                    )
-                                })
-                            })
-                        }}
-                    >Resend</Button>
                 </div>
             </div>
         )
