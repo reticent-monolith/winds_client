@@ -223,38 +223,83 @@ export default class Controls extends React.Component {
     //  | App Methods |
     // +-------------+
 
+    goodToGo = () => {
+        // Check if lines with entered weights are ready
+        const riders = this.state.dispatch.riders
+        if (
+            riders[4].weight === 0 &&
+            riders[3].weight === 0 &&
+            riders[2].weight === 0 &&
+            riders[1].weight === 0
+        ) return false
+        const goodToGo = {
+            4:true,
+            3:true,
+            2:true,
+            1:true
+        }
+        for (let line of [4,3,2,1]) {
+            if (riders[line].weight !== 0 && !this.state.confirmations[line]) {
+                goodToGo[line] = false
+            }
+                
+        }
+        let result = true;
+        for (let i in goodToGo) {
+            if (goodToGo[i] === false) {
+                result = false;
+                break;
+           }
+        }
+        return result
+    }
+
     sendToBT = () => {
+        // Send a JSON string payload of setups to the big top clients
         const payload = {
             4: {
                frontSlider: this.state.dispatch.riders[4].frontSlider,
                middleSlider: this.state.dispatch.riders[4].middleSlider, 
                rearSlider: this.state.dispatch.riders[4].rearSlider, 
-               addedWeight: this.state.dispatch.riders[4].addedWeight
+               addedWeight: this.state.dispatch.riders[4].addedWeight,
+               confirmed: false
             },
             3: {
                 frontSlider: this.state.dispatch.riders[3].frontSlider,
                 middleSlider: this.state.dispatch.riders[3].middleSlider,
                 rearSlider: this.state.dispatch.riders[3].rearSlider,
-                addedWeight: this.state.dispatch.riders[3].addedWeight
+                addedWeight: this.state.dispatch.riders[3].addedWeight,
+                confirmed: false
             },
             2: {
                 frontSlider: this.state.dispatch.riders[2].frontSlider,
                 middleSlider: this.state.dispatch.riders[2].middleSlider,
                 rearSlider: this.state.dispatch.riders[2].rearSlider,
-                addedWeight: this.state.dispatch.riders[2].addedWeight
+                addedWeight: this.state.dispatch.riders[2].addedWeight,
+                confirmed: false
             },
             1: {
                 frontSlider: this.state.dispatch.riders[1].frontSlider,
                 middleSlider: this.state.dispatch.riders[1].middleSlider,
                 rearSlider: this.state.dispatch.riders[1].rearSlider,
-                addedWeight: this.state.dispatch.riders[1].addedWeight
+                addedWeight: this.state.dispatch.riders[1].addedWeight,
+                confirmed: false
             },
         }
         this.client.send("setups", JSON.stringify(payload))
+        this.setState({
+            ...this.state,
+            confirmations: {
+                1: false,
+                2: false,
+                3: false,
+                4: false,
+            }
+        })
     }
 
     handleMessage = (topicString, message) => {
-        // split topic for line and purpose
+        // Handle incoming messages
         let [line, topic] = topicString.split("/")
 
         try {
@@ -299,6 +344,7 @@ export default class Controls extends React.Component {
     }
 
     clearInputs = () => {
+        // Clear all inputs
         this.setState({
             ...this.state,
             dispatch: {
@@ -340,29 +386,8 @@ export default class Controls extends React.Component {
         this.client.send("clear", "clear")
     }
 
-    openCommentModal = () => {
-        this.setState({
-            commentModalIsOpen: true
-        })
-    }
-
-    editComment = (comment) => {
-        this.setState({
-            ...this.state,
-            dispatch: {
-                ...this.state.dispatch,
-                comment: comment
-            }
-        })
-    }
-
-    closeCommentModal = () => {
-        this.setState({
-            commentModalIsOpen: false
-        })
-    }
-
     checkIfConfirmed = line => {
+        // Check if a line is confirmed and display READY if it is
         let style = {
             fontSize: "0.7em",
             fontWeight: "bold",
@@ -375,6 +400,28 @@ export default class Controls extends React.Component {
         }
         return style
     }
+    
+    // Modal stuff
+    openCommentModal = () => {
+        this.setState({
+            commentModalIsOpen: true
+        })
+    }
+    editComment = (comment) => {
+        this.setState({
+            ...this.state,
+            dispatch: {
+                ...this.state.dispatch,
+                comment: comment
+            }
+        })
+    }
+    closeCommentModal = () => {
+        this.setState({
+            commentModalIsOpen: false
+        })
+    }
+
 
 
     //   +-----------------+
@@ -770,15 +817,15 @@ export default class Controls extends React.Component {
                     >Send to Big Top</Button>
                     <Button
                         style={this.styles.button}
-                        variant="primary"
-                        onClick={this.resendToBT}
-                    >Resend</Button>
-                    <Button
-                        style={this.styles.button}
                         variant="success"
                         onClick={e => {
-                            this.props.createDispatch(dispatch)
-                            this.clearInputs()
+                            if (this.goodToGo()) {
+                                this.props.createDispatch(dispatch)
+                                this.clearInputs()
+                            } else {
+                                //TODO: add a modal here
+                                Log.error("Dispatch is not ready!")
+                            }
                         }}
                     >Dispatch</Button>
                     <Button
