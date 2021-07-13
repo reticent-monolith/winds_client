@@ -11,11 +11,9 @@ import "./App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Set where the application is communicating with
-const DROPLET = "https://159.65.16.111:8080/"
-const HTTPS = "https://back.winds.dev/"
 const RETMON = "http://192.168.1.133:8080/"
-const SITE = "https://winds.reticent-monolith.com"
-const URL = RETMON
+const SITE = "https://backend.reticent-monolith.com"
+const URL = SITE
 
 // Today's date for initial getDispatches call
 const TODAY = new Date(Date.now()).toJSON().split("T")[0]
