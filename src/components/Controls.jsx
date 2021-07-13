@@ -13,7 +13,7 @@ import UIfx from "uifx"
 // Register locale for DatePickers
 registerLocale('enGB', enGB)
 
-const WS_URL = "ws://192.168.1.133:8883"
+const WS_URL = "ws://broker.reticent-monolith.com"
 
 export default class Controls extends React.Component {
     constructor(props) {
@@ -73,8 +73,6 @@ export default class Controls extends React.Component {
             commentModalIsOpen: false,
             startDate: new Date(),
             endDate: new Date()
-
-                
         }
 
         this.styles = {
@@ -117,12 +115,12 @@ export default class Controls extends React.Component {
             select: {
                 width: "60px",
                 borderRadius: "5px",
-                border: "none",
+                border: "1px solid",
                 textAlign: "center",
                 height: "1.3em",
                 fontSize: "1.2em",
                 background: "white",
-    
+                borderColor: config.colors.dark
             },
             container: {
                 display: "flex",
@@ -326,7 +324,7 @@ export default class Controls extends React.Component {
                 }
             })
             // this.dataReceivedSound.play()
-        } else {
+        } else if (topic === "confirmation") {
             Log.debug(`Confimation message: ${message.toString()}`)
             this.setState({
                 ...this.state,
@@ -340,6 +338,16 @@ export default class Controls extends React.Component {
             } else {
                 this.unconfirmSound.play()
             }
+        } else if (topic === "poll") {
+            const payload = this.state.dispatch.riders
+            delete payload[4].speed
+            delete payload[3].speed
+            delete payload[2].speed
+            delete payload[1].speed
+            
+            this.client.send("pollResponse", JSON.stringify(payload))
+            Log.debug("sent poll response")
+            console.log(payload)
         }
     }
 
@@ -432,7 +440,7 @@ export default class Controls extends React.Component {
         this.client = new MqttService(WS_URL, this.handleMessage)
         this.setState({
             ...this.state,
-            dispatch: JSON.parse(localStorage.getItem("savedData")) || {
+            dispatch: JSON.parse(sessionStorage.getItem("savedData")) || {
                 riders: {
                     4: {
                         weight: 0,
@@ -488,7 +496,7 @@ export default class Controls extends React.Component {
         const savedData = this.state
         delete savedData.dispatch.startDate
         delete savedData.dispatch.endDate
-        localStorage.setItem("savedData", JSON.stringify(this.state.dispatch))
+        sessionStorage.setItem("savedData", JSON.stringify(this.state.dispatch))
     }
 
 
