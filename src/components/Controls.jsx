@@ -13,7 +13,7 @@ import UIfx from "uifx"
 // Register locale for DatePickers
 registerLocale('enGB', enGB)
 
-const WS_URL = "ws://broker.reticent-monolith.com"
+const WS_URL = "wss://broker.reticent-monolith.com"
 
 export default class Controls extends React.Component {
     constructor(props) {
