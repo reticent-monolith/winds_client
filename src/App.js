@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Set where the application is communicating with
 const RETMON = "http://192.168.1.133:8080/"
-const SITE = "https://backend.reticent-monolith.com"
+const SITE = "https://backend.reticent-monolith.com/"
 const URL = SITE
 
 // Today's date for initial getDispatches call
