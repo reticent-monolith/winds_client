@@ -1,6 +1,7 @@
 export default class Dispatch {
     constructor(dispatchState) {
-        this.dateTime = dispatchState.dateTime || new Date(Date.now()).toJSON()
+        this.date = dispatchState.date || new Date().toLocaleDateString
+        this.time = dispatchState.time || new Date().toLocaleTimeString
         this.riders = dispatchState.riders
         this.windSpeed = dispatchState.windSpeed
         this.windDegrees = dispatchState.windDegrees
