@@ -66,7 +66,7 @@ export default class Controls extends React.Component {
                 comment: ""
             },
             confirmations: {
-                4: false,
+                4: true,
                 3: false,
                 2: false,
                 1: false

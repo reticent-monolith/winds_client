@@ -75,7 +75,6 @@ export default class DispatchCard extends React.Component {
     time() {
 
         const timeString = this.props.data.dateTime.split("T")[1].split(".")[0]
-
         return (
             <span style={this.styles.time}>{timeString}</span>
         )

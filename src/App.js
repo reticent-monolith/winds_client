@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Today's date for initial getDispatches call
-const TODAY = new Date(Date.now()).toJSON().split("T")[0]
+const TODAY = new Date().toLocaleDateString().replaceAll("/", "-")
 
 // Stop the normal right click behaviour so ContextMenu can happen
 document.addEventListener("contextmenu", e => {
