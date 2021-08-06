@@ -11,7 +11,7 @@ import "./App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Set where the application is communicating with
-const RETMON = "http://192.168.1.133:8080/"
+const RETMON = "http://localhost:5000/"
 const SITE = "https://backend.reticent-monolith.com/"
 let URL
 if (process.env.NODE_ENV === "development") {
@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
     URL = SITE
 }
-
+// TODO python expects 2021-08-05, while this sends 05-08-2021 FIX IT
 // Today's date for initial getDispatches call
 const TODAY = new Date().toLocaleDateString().replaceAll("/", "-")
 
@@ -160,6 +160,7 @@ export default class App extends React.Component {
     async getDispatches(date) {
         try {
             const response = await axios.get(`${URL}bydate/${date}`)
+            console.log(response)
             this.setState({dispatches: response.data.reverse().map( d => {
                 return new Dispatch(d)
             })})
